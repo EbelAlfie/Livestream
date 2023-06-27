@@ -12,6 +12,7 @@
       android:theme="@style/Theme.Livestream"
       tools:targetApi="31">
     <activity
+        android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
         android:name=".MainActivity"
         android:exported="true">
       <intent-filter>
