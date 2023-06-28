@@ -1,43 +1,35 @@
 package com.madeean.livestream
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.madeean.livestream.databinding.ActivityMainBinding
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 
 
 class MainActivity : AppCompatActivity() {
   private lateinit var binding:ActivityMainBinding
+  private lateinit var videoAdapter: VideoPagingAdapter
   override fun onCreate(savedInstanceState: Bundle?) {
     binding = ActivityMainBinding.inflate(layoutInflater)
     super.onCreate(savedInstanceState)
     setContentView(binding.root)
 
-    lifecycle.addObserver(binding.youtubePlayerView)
+    setUpRecyclerView()
+    insertData()
+  }
 
-    val customPlayerUi: View =binding.youtubePlayerView.inflateCustomPlayerUi(R.layout.custom_player_ui)
+  private fun insertData() {
+    val listOfStreamKey: MutableList<String> = mutableListOf(
+      "rtmp://10.4.77.122/live/cacingtanah"
+    )
+    videoAdapter.submitList(listOfStreamKey)
+  }
 
-    val listener: YouTubePlayerListener = object : AbstractYouTubePlayerListener() {
-      override fun onReady(youTubePlayer: YouTubePlayer) {
-        val customPlayerUiController:CustomPlayerUiController = CustomPlayerUiController(
-          this@MainActivity,
-          customPlayerUi,
-          youTubePlayer,
-          binding.youtubePlayerView
-        )
-        customPlayerUiController.init()
-        youTubePlayer.addListener(customPlayerUiController)
-        youTubePlayer.loadVideo("yabDCV4ccQs",0f)
-      }
-
+  private fun setUpRecyclerView() {
+    binding.apply {
+      rvLivestream.layoutManager = LinearLayoutManager(this@MainActivity)
+      videoAdapter = VideoPagingAdapter()
+      rvLivestream.adapter = videoAdapter
     }
-
-    val options:IFramePlayerOptions = IFramePlayerOptions.Builder().controls(0).build()
-    binding.youtubePlayerView.initialize(listener,options)
-
   }
 }
