@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.media3.common.MediaItem
 import androidx.media3.datasource.DataSource
 import androidx.media3.datasource.DefaultHttpDataSource
@@ -51,6 +52,7 @@ class VideoPagingAdapter(private val port: Int) : RecyclerView.Adapter<VideoPagi
       .build().also {
         holder.binding.pvVideoView.player = it
         val mediaItem = MediaItem.fromUri(BASE_URL + differ.currentList[position])
+        Toast.makeText(context, BASE_URL + differ.currentList[position], Toast.LENGTH_SHORT).show()
         val dataSourceFactory: DataSource.Factory = RtmpDataSource.Factory()
         val mediaSource: MediaSource =
           ProgressiveMediaSource.Factory(dataSourceFactory)
