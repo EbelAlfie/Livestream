@@ -22,8 +22,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 
 
-class VideoPagingAdapter : RecyclerView.Adapter<VideoPagingAdapter.VideoViewHolder>() {
+class VideoPagingAdapter(private val port: Int) : RecyclerView.Adapter<VideoPagingAdapter.VideoViewHolder>() {
   private lateinit var context: Context
+  private var BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
 
   private val differCallback = object : DiffUtil.ItemCallback<String>(){
     override fun areItemsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
@@ -49,7 +50,7 @@ class VideoPagingAdapter : RecyclerView.Adapter<VideoPagingAdapter.VideoViewHold
     ExoPlayer.Builder(context)
       .build().also {
         holder.binding.pvVideoView.player = it
-        val mediaItem = MediaItem.fromUri(differ.currentList[position])
+        val mediaItem = MediaItem.fromUri(BASE_URL + differ.currentList[position])
         val dataSourceFactory: DataSource.Factory = RtmpDataSource.Factory()
         val mediaSource: MediaSource =
           ProgressiveMediaSource.Factory(dataSourceFactory)
