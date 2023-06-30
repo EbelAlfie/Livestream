@@ -6,9 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".LivestreamActivity"
     >
-  <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/rv_livestream"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"/>
 
+  <androidx.viewpager2.widget.ViewPager2
+      android:id="@+id/vp_live_stream"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"/>
 </LinearLayout>
