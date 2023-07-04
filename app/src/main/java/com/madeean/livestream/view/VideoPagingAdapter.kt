@@ -2,12 +2,14 @@ package com.madeean.livestream.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.media3.common.MediaItem
-import androidx.media3.datasource.DataSource
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
 import androidx.media3.datasource.rtmp.RtmpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
@@ -50,17 +52,51 @@ class VideoPagingAdapter(private val port: Int) : RecyclerView.Adapter<VideoPagi
     ExoPlayer.Builder(context)
       .build().also {
         holder.binding.pvVideoView.player = it
+
         val mediaItem = MediaItem.fromUri(BASE_URL + differ.currentList[position].streamKey)
-        Toast.makeText(context, BASE_URL + differ.currentList[position], Toast.LENGTH_SHORT).show()
-        val dataSourceFactory: DataSource.Factory = RtmpDataSource.Factory()
+
         val mediaSource: MediaSource =
-          ProgressiveMediaSource.Factory(dataSourceFactory)
+          ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
             .createMediaSource(mediaItem)
+
+        it.trackSelectionParameters = it.trackSelectionParameters
+          .buildUpon()
+          .setMaxVideoSizeSd()
+          .build()
+
+        it.addListener(object: Player.Listener {
+          override fun onIsLoadingChanged(isLoading: Boolean) {
+            super.onIsLoadingChanged(isLoading)
+            showProgressBar(holder.binding.progressLoading, isLoading)
+          }
+          override fun onPlaybackStateChanged(playbackState: Int) {
+            when(playbackState) {
+              Player.STATE_READY -> {Toast.makeText(context, "ready", Toast.LENGTH_SHORT).show()}
+              Player.STATE_BUFFERING -> {Toast.makeText(context, "buffer", Toast.LENGTH_SHORT).show()}
+              Player.STATE_ENDED -> {showEndStream(holder.binding)}
+              Player.STATE_IDLE -> {it.prepare()}
+            }
+          }
+          override fun onPlayerError(error: PlaybackException) {
+            super.onPlayerError(error)
+            Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show()
+            it.prepare()
+          }
+        })
 
         it.setMediaSource(mediaSource)
         it.prepare()
         it.playWhenReady = true
       }
+  }
+
+  private fun showEndStream(binding: CustomPlayerUiBinding) {
+    binding.rlVideoContainer.visibility = View.GONE
+    binding.rlStreamEnded.visibility = View.VISIBLE
+  }
+
+  private fun showProgressBar(progressBar: ProgressBar, isLoading: Boolean) {
+    progressBar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
   }
 
   fun submitList(listOfStreamKeys: List<LivestreamData>) {
