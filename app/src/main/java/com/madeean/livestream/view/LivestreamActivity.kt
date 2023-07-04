@@ -3,7 +3,9 @@ package com.madeean.livestream.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.madeean.livestream.databinding.ActivityMainBinding
 import com.madeean.livestream.domain.entity.LivestreamData
@@ -33,7 +35,11 @@ class LivestreamActivity : AppCompatActivity() {
 
     port = intent.getIntExtra("port", 0)
 
-    viewModel = LivestreamViewModel()
+    viewModel = ViewModelProvider(
+      this,
+      ViewModelProvider.NewInstanceFactory()
+    )[LivestreamViewModel::class.java]
+
     setUpRecyclerView()
     setObserver(viewModel)
   }
@@ -54,6 +60,7 @@ class LivestreamActivity : AppCompatActivity() {
   }
 
   private fun insertData(listOfStreamKey: List<LivestreamData>) {
+    Log.d("test", listOfStreamKey.toString())
     videoAdapter.submitList(listOfStreamKey)
   }
 }

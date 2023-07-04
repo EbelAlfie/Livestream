@@ -2,6 +2,7 @@ package com.madeean.livestream.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -49,7 +50,7 @@ class VideoPagingAdapter(private val port: Int) : RecyclerView.Adapter<VideoPagi
     ExoPlayer.Builder(context)
       .build().also {
         holder.binding.pvVideoView.player = it
-        val mediaItem = MediaItem.fromUri(BASE_URL + differ.currentList[position])
+        val mediaItem = MediaItem.fromUri(BASE_URL + differ.currentList[position].streamKey)
         Toast.makeText(context, BASE_URL + differ.currentList[position], Toast.LENGTH_SHORT).show()
         val dataSourceFactory: DataSource.Factory = RtmpDataSource.Factory()
         val mediaSource: MediaSource =

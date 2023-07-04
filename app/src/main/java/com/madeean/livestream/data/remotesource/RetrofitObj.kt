@@ -2,11 +2,12 @@ package com.madeean.livestream.data.remotesource
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitObj {
-    private val BASE_URL = "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/livestreamapi/obs"
+    private val BASE_URL = "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/livestreamapi/"
     private fun retrofitClient(): Retrofit {
         val loggingInterceptor =
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -21,7 +22,7 @@ object RetrofitObj {
             .build()
     }
 
-    fun apiService():ApiService{
+    fun apiService(): ApiService{
         return retrofitClient().create(ApiService::class.java)
     }
 }

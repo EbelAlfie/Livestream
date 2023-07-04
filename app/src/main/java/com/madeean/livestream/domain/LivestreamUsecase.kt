@@ -4,5 +4,5 @@ import com.madeean.livestream.domain.entity.LivestreamData
 
 interface LivestreamUsecase {
 
-    fun getLivestreamData(): List<LivestreamData>
+    suspend fun getLivestreamData(): List<LivestreamData>
 }

@@ -5,6 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.madeean.livestream.domain.LivestreamUsecaseImpl
 import com.madeean.livestream.domain.entity.LivestreamData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class LivestreamViewModel() : ViewModel(){
     private val usecaseImpl: LivestreamUsecaseImpl = LivestreamUsecaseImpl()
@@ -16,7 +20,9 @@ class LivestreamViewModel() : ViewModel(){
     }
 
     private fun fetchLiveStreams() {
-        _livestreamData.value = usecaseImpl.getLivestreamData()
+        CoroutineScope(IO).launch {
+            _livestreamData.postValue(usecaseImpl.getLivestreamData())
+        }
     }
 
 }
