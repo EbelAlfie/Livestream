@@ -4,16 +4,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.madeean.livestream.domain.LivestreamUsecaseImpl
-import com.madeean.livestream.domain.entity.LivestreamData
+import com.madeean.livestream.domain.entity.LivestreamKeysData
+import com.madeean.livestream.domain.entity.LivestreamStatistic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class LivestreamViewModel() : ViewModel(){
     private val usecaseImpl: LivestreamUsecaseImpl = LivestreamUsecaseImpl()
-    private val _livestreamData: MutableLiveData<List<LivestreamData>> = MutableLiveData()
-    fun getLivestreamData(): LiveData<List<LivestreamData>> = _livestreamData
+
+    private val _livestreamViewCount: MutableLiveData<Int> = MutableLiveData()
+    fun getLivestreamViewCount(): LiveData<Int> = _livestreamViewCount
+
+    private val _livestreamkeys: MutableLiveData<List<LivestreamKeysData>> = MutableLiveData()
+    fun getLivestreamData(): LiveData<List<LivestreamKeysData>> = _livestreamkeys
 
     init {
         fetchLiveStreams()
@@ -21,7 +25,21 @@ class LivestreamViewModel() : ViewModel(){
 
     private fun fetchLiveStreams() {
         CoroutineScope(IO).launch {
-            _livestreamData.postValue(usecaseImpl.getLivestreamData())
+            _livestreamkeys.postValue(usecaseImpl.getLivestreamData())
+        }
+    }
+
+    fun getLiveViewCount() {
+        CoroutineScope(IO).launch {
+            _livestreamViewCount.postValue(usecaseImpl.getLivestreamViewCount())
+        }
+    }
+
+    fun postViewCount(streamKey: String, isViewing: Boolean) {
+        CoroutineScope(IO).launch {
+            usecaseImpl.postViewCount(
+                LivestreamStatistic(streamKey= streamKey, isViewing = isViewing)
+            )
         }
     }
 
