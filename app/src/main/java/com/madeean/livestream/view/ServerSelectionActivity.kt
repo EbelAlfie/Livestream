@@ -1,4 +1,4 @@
-package com.madeean.livestream
+package com.madeean.livestream.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
