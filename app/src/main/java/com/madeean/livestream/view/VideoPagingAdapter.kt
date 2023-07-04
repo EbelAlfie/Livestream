@@ -2,6 +2,7 @@ package com.madeean.livestream.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
     override fun areContentsTheSame(oldItem: LivestreamKeysData, newItem: LivestreamKeysData): Boolean
     = oldItem.streamKey == newItem.streamKey
   }
+
   private val differ = AsyncListDiffer(this, differCallback)
 
   class VideoViewHolder(val binding: CustomPlayerUiBinding): ViewHolder(binding.root)
@@ -71,16 +73,20 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
             Player.STATE_READY -> {
               showProgressBar(holder.binding.progressLoading, true)
               listener.onViewCountPost(data.streamKey, true)
-              Toast.makeText(context, "ready", Toast.LENGTH_SHORT).show()
+              toastPrint("ready")
             }
-            Player.STATE_BUFFERING -> {Toast.makeText(context, "buffer", Toast.LENGTH_SHORT).show()}
-            Player.STATE_ENDED -> {showEndStream(holder.binding)}
-            Player.STATE_IDLE -> {it.prepare()}
+            Player.STATE_BUFFERING -> {toastPrint("buffer")}
+            Player.STATE_ENDED -> {
+              toastPrint("end")
+              showEndStream(holder.binding)}
+            Player.STATE_IDLE -> {
+              toastPrint("idle")
+              it.prepare()}
           }
         }
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
-          Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show()
+          toastPrint(error.toString())
           it.prepare()
         }
       })
@@ -89,7 +95,14 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
       it.playWhenReady = true
     }
 
-    Timer().schedule
+    Handler().post {
+      holder.binding.layoutLiveView.tvViews.text = listener.getViewCount().toString()
+    }
+
+  }
+
+  private fun toastPrint(s: String) {
+    Toast.makeText(context, s, Toast.LENGTH_SHORT).show()
   }
 
   private fun showEndStream(binding: CustomPlayerUiBinding) {
