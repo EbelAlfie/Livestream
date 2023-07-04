@@ -51,8 +51,8 @@ class LivestreamActivity : AppCompatActivity() {
   }
 
   private val mListener = object: VideoPagingAdapter.SetOnUpdatedItem {
-    override fun getViewCount() {
-
+    override fun getViewCount(streamKey: String) {
+      viewModel.getLiveViewCount(streamKey)
     }
 
     override fun onViewCountPost(streamKey: String, isViewing: Boolean) {

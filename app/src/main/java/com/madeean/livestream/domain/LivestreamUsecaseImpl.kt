@@ -9,8 +9,8 @@ class LivestreamUsecaseImpl: LivestreamUsecase {
     override suspend fun getLivestreamData(): List<LivestreamKeysData> {
         return liveStreamRepository.getLivestreamData()
     }
-    override suspend fun getLivestreamViewCount(): Int {
-        return liveStreamRepository.getLivestreamViewCount()
+    override suspend fun getLivestreamViewCount(streamKey: String): Int {
+        return liveStreamRepository.getLivestreamViewCount(streamKey)
     }
 
     override suspend fun postViewCount(data: LivestreamStatistic) {

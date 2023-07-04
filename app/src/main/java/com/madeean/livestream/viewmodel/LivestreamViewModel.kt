@@ -29,9 +29,9 @@ class LivestreamViewModel() : ViewModel(){
         }
     }
 
-    fun getLiveViewCount() {
+    fun getLiveViewCount(streamKey: String) {
         CoroutineScope(IO).launch {
-            _livestreamViewCount.postValue(usecaseImpl.getLivestreamViewCount())
+            _livestreamViewCount.postValue(usecaseImpl.getLivestreamViewCount(streamKey))
         }
     }
 

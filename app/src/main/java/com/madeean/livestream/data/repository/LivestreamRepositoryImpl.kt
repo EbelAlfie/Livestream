@@ -12,8 +12,8 @@ class LivestreamRepositoryImpl: LivestreamRepository {
         return LivestreamDataModel.transform(data)
     }
 
-    override suspend fun getLivestreamViewCount(): Int {
-        val data = RetrofitObj.apiService().getLiveStreamView()
+    override suspend fun getLivestreamViewCount(streamKey: String): Int {
+        val data = RetrofitObj.apiService().getLiveStreamView(streamKey)
         return LivestreamViewCountModel.transform(data)
     }
 

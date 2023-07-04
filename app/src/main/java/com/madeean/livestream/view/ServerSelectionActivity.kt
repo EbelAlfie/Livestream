@@ -13,7 +13,9 @@ class ServerSelectionActivity: AppCompatActivity() {
         setContentView(binding.root)
         binding.apply{
             btnSubmit.setOnClickListener {
-                val port = Integer.valueOf(etPortInsertion.text.toString())
+                val data = etPortInsertion.text.toString()
+                if (data.isBlank()) return@setOnClickListener
+                val port = Integer.valueOf(data)
                 LivestreamActivity.newInstanceActivity(this@ServerSelectionActivity, port)
             }
         }

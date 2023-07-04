@@ -3,10 +3,12 @@ package com.madeean.livestream.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -27,7 +29,9 @@ import java.util.*
 
 class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdatedItem) : RecyclerView.Adapter<VideoPagingAdapter.VideoViewHolder>() {
   private lateinit var context: Context
-  private var BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
+  private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
+
+  private val viewCountHandler = Handler(Looper.getMainLooper())
 
   private val differCallback = object : DiffUtil.ItemCallback<LivestreamKeysData>(){
     override fun areItemsTheSame(oldItem: LivestreamKeysData, newItem: LivestreamKeysData): Boolean
@@ -35,8 +39,12 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
     override fun areContentsTheSame(oldItem: LivestreamKeysData, newItem: LivestreamKeysData): Boolean
     = oldItem.streamKey == newItem.streamKey
   }
-
   private val differ = AsyncListDiffer(this, differCallback)
+
+  interface SetOnUpdatedItem {
+    fun getViewCount(streamKey: String)
+    fun onViewCountPost(streamKey: String, isViewing: Boolean)
+  }
 
   class VideoViewHolder(val binding: CustomPlayerUiBinding): ViewHolder(binding.root)
 
@@ -51,58 +59,69 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
     return differ.currentList.size
   }
 
-  @SuppressLint("UnsafeOptInUsageError")
   override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
     val data = differ.currentList[position]
-    val exoplayer = ExoPlayer.Builder(context).build()
-    exoplayer.also {
-      holder.binding.pvVideoView.player = it
+    initPlayer(holder.binding, data.streamKey)
+    getViewCount(holder.binding.layoutLiveView.tvViews, data.streamKey)
+  }
 
-      val mediaItem = MediaItem.fromUri(BASE_URL + data.streamKey)
+  override fun onViewDetachedFromWindow(holder: VideoViewHolder) {
+
+  }
+
+  @SuppressLint("UnsafeOptInUsageError")
+  private fun initPlayer(binding: CustomPlayerUiBinding, streamKey: String) {
+    val exoplayer = ExoPlayer.Builder(context).build()
+    exoplayer.apply {
+      binding.pvVideoView.player = this
+
+      val mediaItem = MediaItem.fromUri(BASE_URL + streamKey)
       val mediaSource: MediaSource =
         ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
           .createMediaSource(mediaItem)
 
-      it.addListener(object: Player.Listener {
+      addListener(object: Player.Listener {
         override fun onIsLoadingChanged(isLoading: Boolean) {
           super.onIsLoadingChanged(isLoading)
-          showProgressBar(holder.binding.progressLoading, isLoading)
+          showProgressBar(binding.progressLoading, isLoading)
         }
         override fun onPlaybackStateChanged(playbackState: Int) {
           when(playbackState) {
             Player.STATE_READY -> {
-              showProgressBar(holder.binding.progressLoading, true)
-              listener.onViewCountPost(data.streamKey, true)
+              showProgressBar(binding.progressLoading, true)
+              listener.onViewCountPost(streamKey, true)
               toastPrint("ready")
             }
             Player.STATE_BUFFERING -> {toastPrint("buffer")}
             Player.STATE_ENDED -> {
               toastPrint("end")
-              showEndStream(holder.binding)}
+              showEndStream(binding)}
             Player.STATE_IDLE -> {
               toastPrint("idle")
-              it.prepare()}
+              prepare()}
           }
         }
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
           toastPrint(error.toString())
-          it.prepare()
+          prepare()
         }
       })
-      it.setMediaSource(mediaSource)
-      it.prepare()
-      it.playWhenReady = true
+      setMediaSource(mediaSource)
+      prepare()
+      playWhenReady = true
     }
-
-    Handler().post {
-      holder.binding.layoutLiveView.tvViews.text = listener.getViewCount().toString()
-    }
-
   }
 
-  private fun toastPrint(s: String) {
-    Toast.makeText(context, s, Toast.LENGTH_SHORT).show()
+  private fun getViewCount(tvViews: TextView, streamKey: String) {
+    viewCountHandler.post {
+      object : Runnable {
+        override fun run() {
+          tvViews.text = listener.getViewCount(streamKey).toString()
+          viewCountHandler.postDelayed(this, 2000)
+        }
+      }
+    }
   }
 
   private fun showEndStream(binding: CustomPlayerUiBinding) {
@@ -118,9 +137,8 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
     differ.submitList(listOfStreamKeys)
   }
 
-  interface SetOnUpdatedItem {
-    fun getViewCount()
-    fun onViewCountPost(streamKey: String, isViewing: Boolean)
+  private fun toastPrint(s: String) {
+    Toast.makeText(context, s, Toast.LENGTH_SHORT).show()
   }
 
 }
