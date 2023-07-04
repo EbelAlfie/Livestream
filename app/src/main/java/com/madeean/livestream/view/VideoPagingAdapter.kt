@@ -16,15 +16,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
+import com.madeean.livestream.domain.entity.LivestreamData
 
 
 class VideoPagingAdapter(private val port: Int) : RecyclerView.Adapter<VideoPagingAdapter.VideoViewHolder>() {
   private lateinit var context: Context
   private var BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
 
-  private val differCallback = object : DiffUtil.ItemCallback<String>(){
-    override fun areItemsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
-    override fun areContentsTheSame(oldItem: String, newItem: String): Boolean = oldItem == newItem
+  private val differCallback = object : DiffUtil.ItemCallback<LivestreamData>(){
+    override fun areItemsTheSame(oldItem: LivestreamData, newItem: LivestreamData): Boolean
+    = oldItem.streamKey == newItem.streamKey
+    override fun areContentsTheSame(oldItem: LivestreamData, newItem: LivestreamData): Boolean
+    = oldItem.streamKey == newItem.streamKey
   }
   private val differ = AsyncListDiffer(this, differCallback)
 
@@ -59,7 +62,7 @@ class VideoPagingAdapter(private val port: Int) : RecyclerView.Adapter<VideoPagi
       }
   }
 
-  fun submitList(listOfStreamKeys: List<String>) {
+  fun submitList(listOfStreamKeys: List<LivestreamData>) {
     differ.submitList(listOfStreamKeys)
   }
 

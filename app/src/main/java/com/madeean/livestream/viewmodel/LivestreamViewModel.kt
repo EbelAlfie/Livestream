@@ -8,15 +8,15 @@ import com.madeean.livestream.domain.entity.LivestreamData
 
 class LivestreamViewModel() : ViewModel(){
     private val usecaseImpl: LivestreamUsecaseImpl = LivestreamUsecaseImpl()
-    private val _livestreamData: MutableLiveData<LivestreamData> = MutableLiveData()
-    fun getLivestreamData(): LiveData<LivestreamData> = _livestreamData
+    private val _livestreamData: MutableLiveData<List<LivestreamData>> = MutableLiveData()
+    fun getLivestreamData(): LiveData<List<LivestreamData>> = _livestreamData
 
     init {
         fetchLiveStreams()
     }
 
-    fun fetchLiveStreams() {
-        usecaseImpl.getLivestreamData()
+    private fun fetchLiveStreams() {
+        _livestreamData.value = usecaseImpl.getLivestreamData()
     }
 
 }

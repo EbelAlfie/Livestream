@@ -6,12 +6,15 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.madeean.livestream.databinding.ActivityMainBinding
+import com.madeean.livestream.domain.entity.LivestreamData
+import com.madeean.livestream.viewmodel.LivestreamViewModel
 
 
 class LivestreamActivity : AppCompatActivity() {
   private lateinit var binding:ActivityMainBinding
   private lateinit var videoAdapter: VideoPagingAdapter
   private var port: Int = 0
+  private lateinit var viewModel: LivestreamViewModel
 
   companion object {
     fun newInstanceActivity(context: Context, port: Int?) {
@@ -30,8 +33,15 @@ class LivestreamActivity : AppCompatActivity() {
 
     port = intent.getIntExtra("port", 0)
 
+    viewModel = LivestreamViewModel()
     setUpRecyclerView()
-    insertData()
+    setObserver(viewModel)
+  }
+
+  private fun setObserver(viewModel: LivestreamViewModel) {
+    viewModel.getLivestreamData().observe(this) {
+      insertData(it)
+    }
   }
 
   private fun setUpRecyclerView() {
@@ -43,11 +53,7 @@ class LivestreamActivity : AppCompatActivity() {
     }
   }
 
-  private fun insertData() {
-    val listOfStreamKey: MutableList<String> = mutableListOf(
-      "cacingtanah",
-      "nematoda"
-    )
+  private fun insertData(listOfStreamKey: List<LivestreamData>) {
     videoAdapter.submitList(listOfStreamKey)
   }
 }
