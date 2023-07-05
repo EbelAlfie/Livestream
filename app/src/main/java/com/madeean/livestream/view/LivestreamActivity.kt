@@ -12,10 +12,11 @@ import com.madeean.livestream.domain.entity.LivestreamKeysData
 import com.madeean.livestream.viewmodel.LivestreamViewModel
 
 
-class LivestreamActivity : AppCompatActivity(), VideoPagingAdapter.SetOnUpdatedItem {
+class LivestreamActivity : AppCompatActivity() {
   private lateinit var binding:ActivityMainBinding
-  private lateinit var videoAdapter: VideoPagingAdapter
+  private lateinit var adapter: FragmentAdapter
   private var port: Int = 0
+  private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
   private lateinit var viewModel: LivestreamViewModel
 
   companion object {
@@ -40,39 +41,24 @@ class LivestreamActivity : AppCompatActivity(), VideoPagingAdapter.SetOnUpdatedI
       ViewModelProvider.NewInstanceFactory()
     )[LivestreamViewModel::class.java]
 
-    setUpRecyclerView()
+    setViewPager()
     setObserver(viewModel)
   }
 
   private fun setObserver(viewModel: LivestreamViewModel) {
     viewModel.getLivestreamData().observe(this) {
-      insertData(it)
-    }
-
-    viewModel.getLivestreamViewCount().observe(this) {
-      videoAdapter.updateText(it ?: 0)
-    }
-  }
-
-  override fun getViewCount(streamKey: String) {
-    viewModel.getLiveViewCount(streamKey)
-  }
-
-  override fun onViewCountPost(streamKey: String, isViewing: Boolean) {
-    viewModel.postViewCount(streamKey, isViewing)
-  }
-
-  private fun setUpRecyclerView() {
-    videoAdapter = VideoPagingAdapter(port, this)
-    binding.vpLiveStream.apply {
-      offscreenPageLimit = 1
-      (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-      adapter = videoAdapter
+      adapter.apply {
+        for(i in it){
+          addFragment(FragmentLiveStreaming(BASE_URL, i.streamKey))
+        }
+      }
     }
   }
 
-  private fun insertData(listOfStreamKey: List<LivestreamKeysData>) {
-    Log.d("test", listOfStreamKey.toString())
-    videoAdapter.submitList(listOfStreamKey)
+  private fun setViewPager() {
+    adapter = FragmentAdapter(
+      supportFragmentManager, lifecycle
+    )
+    binding.vpLiveStream.adapter = adapter
   }
 }
