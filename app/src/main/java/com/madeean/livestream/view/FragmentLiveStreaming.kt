@@ -21,12 +21,13 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.entity.LivestreamKeysData
+import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.LivestreamViewModel
 
 class FragmentLiveStreaming(private val BASE_URL: String, private val streamKey: String): Fragment() {
     private lateinit var binding : CustomPlayerUiBinding
     private val viewCountHandler = Handler(Looper.getMainLooper())
-    private lateinit var viewModel: LivestreamViewModel
+    private lateinit var viewModel: FragmentLiveViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,7 +44,7 @@ class FragmentLiveStreaming(private val BASE_URL: String, private val streamKey:
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.NewInstanceFactory()
-        )[LivestreamViewModel::class.java]
+        )[FragmentLiveViewModel::class.java]
 
         viewModel.postViewCount(streamKey, true)
 
