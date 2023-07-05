@@ -4,8 +4,7 @@ import com.madeean.livestream.data.repository.LivestreamRepositoryImpl
 import com.madeean.livestream.domain.entity.LivestreamKeysData
 import com.madeean.livestream.domain.entity.LivestreamStatistic
 
-class LivestreamUsecaseImpl: LivestreamUsecase {
-    private val liveStreamRepository: LivestreamRepositoryImpl = LivestreamRepositoryImpl()
+class LivestreamUsecaseImpl (private val liveStreamRepository: LivestreamRepositoryImpl): LivestreamUsecase {
     override suspend fun getLivestreamData(): List<LivestreamKeysData> {
         return liveStreamRepository.getLivestreamData()
     }

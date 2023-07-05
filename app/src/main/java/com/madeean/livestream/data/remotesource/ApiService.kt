@@ -2,9 +2,7 @@ package com.madeean.livestream.data.remotesource
 
 import com.madeean.livestream.data.model.LivestreamDataModel
 import com.madeean.livestream.data.model.LivestreamViewCountModel
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface ApiService {
     @GET("obs/")
@@ -13,6 +11,7 @@ interface ApiService {
     suspend fun getLiveStreamView(
         @Query("stream_key") streamKey: String
     ): LivestreamViewCountModel
+    @Headers("content-type: application/json")
     @POST("obs/view")
     suspend fun postViewCount()
 }

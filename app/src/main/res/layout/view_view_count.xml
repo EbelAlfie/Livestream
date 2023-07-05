@@ -10,6 +10,7 @@
         android:layout_width="50sp"
         android:layout_height="wrap_content"
         tools:text="0"
+        android:textColor="@color/black"
         android:textSize="30sp"
         app:drawableEndCompat="@drawable/baseline_person_24" />
 

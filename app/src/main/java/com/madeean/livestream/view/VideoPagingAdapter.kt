@@ -11,6 +11,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.datasource.rtmp.RtmpDataSource
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.entity.LivestreamKeysData
 import com.madeean.livestream.viewmodel.LivestreamViewModel
@@ -28,6 +30,7 @@ import java.util.*
 
 
 class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdatedItem) : RecyclerView.Adapter<VideoPagingAdapter.VideoViewHolder>() {
+  private lateinit var holder: VideoViewHolder
   private lateinit var context: Context
   private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
 
@@ -50,9 +53,10 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
     context = parent.context
-    return VideoViewHolder(
+    holder = VideoViewHolder(
       CustomPlayerUiBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
+    return holder
   }
 
   override fun getItemCount(): Int {
@@ -62,11 +66,7 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
   override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
     val data = differ.currentList[position]
     initPlayer(holder.binding, data.streamKey)
-    getViewCount(holder.binding.layoutLiveView.tvViews, data.streamKey)
-  }
-
-  override fun onViewDetachedFromWindow(holder: VideoViewHolder) {
-
+    getViewCount(data.streamKey)
   }
 
   @SuppressLint("UnsafeOptInUsageError")
@@ -75,9 +75,13 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
     exoplayer.apply {
       binding.pvVideoView.player = this
 
-      val mediaItem = MediaItem.fromUri(BASE_URL + streamKey)
-      val mediaSource: MediaSource =
-        ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
+      //val mediaItem = MediaItem.fromUri(BASE_URL + streamKey)
+      val mediaItem = MediaItem.Builder()
+        .setUri(BASE_URL + streamKey)
+        .setMimeType(MimeTypes.APPLICATION_MPD)
+        .build()
+
+      val mediaSource: MediaSource = ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
           .createMediaSource(mediaItem)
 
       addListener(object: Player.Listener {
@@ -88,8 +92,7 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
         override fun onPlaybackStateChanged(playbackState: Int) {
           when(playbackState) {
             Player.STATE_READY -> {
-              showProgressBar(binding.progressLoading, true)
-              listener.onViewCountPost(streamKey, true)
+              showProgressBar(binding.progressLoading, false)
               toastPrint("ready")
             }
             Player.STATE_BUFFERING -> {toastPrint("buffer")}
@@ -107,21 +110,28 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
           prepare()
         }
       })
+
+      // Update the track selection parameters to only pick standard definition tracks
+      trackSelectionParameters = trackSelectionParameters
+        .buildUpon()
+        .setMaxVideoSizeSd()
+        .build()
+
       setMediaSource(mediaSource)
       prepare()
       playWhenReady = true
     }
   }
 
-  private fun getViewCount(tvViews: TextView, streamKey: String) {
-    viewCountHandler.post {
+  private fun getViewCount(streamKey: String) {
+    viewCountHandler.postDelayed(
       object : Runnable {
         override fun run() {
-          tvViews.text = listener.getViewCount(streamKey).toString()
-          viewCountHandler.postDelayed(this, 2000)
+          listener.getViewCount(streamKey)
+          viewCountHandler.postDelayed(this, 5000)
         }
       }
-    }
+    , 5000)
   }
 
   private fun showEndStream(binding: CustomPlayerUiBinding) {
@@ -139,6 +149,10 @@ class VideoPagingAdapter(private val port: Int, private val listener: SetOnUpdat
 
   private fun toastPrint(s: String) {
     Toast.makeText(context, s, Toast.LENGTH_SHORT).show()
+  }
+
+  fun updateText(it: Int) {
+    holder.binding.layoutLiveView.tvViews.text = it.toString()
   }
 
 }

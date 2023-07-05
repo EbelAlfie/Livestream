@@ -12,7 +12,7 @@ import com.madeean.livestream.domain.entity.LivestreamKeysData
 import com.madeean.livestream.viewmodel.LivestreamViewModel
 
 
-class LivestreamActivity : AppCompatActivity() {
+class LivestreamActivity : AppCompatActivity(), VideoPagingAdapter.SetOnUpdatedItem {
   private lateinit var binding:ActivityMainBinding
   private lateinit var videoAdapter: VideoPagingAdapter
   private var port: Int = 0
@@ -48,20 +48,22 @@ class LivestreamActivity : AppCompatActivity() {
     viewModel.getLivestreamData().observe(this) {
       insertData(it)
     }
+
+    viewModel.getLivestreamViewCount().observe(this) {
+      videoAdapter.updateText(it ?: 0)
+    }
   }
 
-  private val mListener = object: VideoPagingAdapter.SetOnUpdatedItem {
-    override fun getViewCount(streamKey: String) {
-      viewModel.getLiveViewCount(streamKey)
-    }
+  override fun getViewCount(streamKey: String) {
+    viewModel.getLiveViewCount(streamKey)
+  }
 
-    override fun onViewCountPost(streamKey: String, isViewing: Boolean) {
-      viewModel.postViewCount(streamKey, isViewing)
-    }
+  override fun onViewCountPost(streamKey: String, isViewing: Boolean) {
+    viewModel.postViewCount(streamKey, isViewing)
   }
 
   private fun setUpRecyclerView() {
-    videoAdapter = VideoPagingAdapter(port, mListener)
+    videoAdapter = VideoPagingAdapter(port, this)
     binding.vpLiveStream.apply {
       offscreenPageLimit = 1
       (getChildAt(0) as RecyclerView).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
