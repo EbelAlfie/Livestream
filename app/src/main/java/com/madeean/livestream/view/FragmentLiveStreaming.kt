@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -49,7 +50,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             ViewModelProvider.NewInstanceFactory()
         )[FragmentLiveViewModel::class.java]
 
-        //viewModel.postViewCount(streamKey, true)
+        viewModel.postViewCount(streamKey, true)
 
         setObserver()
         initPlayer()
@@ -124,14 +125,14 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     }
 
     private fun getViewCount() {
-        viewCountHandler.post {
+        viewCountHandler.postDelayed(
             object : Runnable {
                 override fun run() {
-                    //viewModel.getLiveViewCount(streamKey)
+                    viewModel.getLiveViewCount(streamKey)
                     viewCountHandler.postDelayed(this, 5000)
                 }
             }
-        }
+        , 5000)
     }
 
     private fun showEndStream(binding: CustomPlayerUiBinding) {
@@ -147,7 +148,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     }
 
     override fun onDestroy() {
-        //viewModel.postViewCount(streamKey, false)
+        viewModel.postViewCount(streamKey, false)
         super.onDestroy()
     }
 }

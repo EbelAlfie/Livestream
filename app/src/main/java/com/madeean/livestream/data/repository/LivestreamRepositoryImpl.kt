@@ -2,6 +2,7 @@ package com.madeean.livestream.data.repository
 
 import android.util.Log
 import com.madeean.livestream.data.model.LivestreamDataModel
+import com.madeean.livestream.data.model.LivestreamStatisticModel
 import com.madeean.livestream.data.model.LivestreamViewCountModel
 import com.madeean.livestream.data.remotesource.RetrofitObj
 import com.madeean.livestream.domain.entity.LivestreamKeysData
@@ -28,9 +29,9 @@ class LivestreamRepositoryImpl: LivestreamRepository {
         }
     }
 
-    override suspend fun postViewCount(liveStat: LivestreamStatistic) {
+    override suspend fun postViewCount(liveStat: LivestreamStatisticModel) {
         try {
-            RetrofitObj.apiService().postViewCount()
+            RetrofitObj.apiService().postViewCount(liveStat)
         } catch (e: Exception) {
             Log.d("postview", e.toString())
         }

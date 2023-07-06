@@ -8,5 +8,5 @@ interface LivestreamUsecase {
     suspend fun getLivestreamData(): List<LivestreamKeysData>
     suspend fun getLivestreamViewCount(streamKey: String): Int
 
-    suspend fun postViewCount(isViewing: LivestreamStatistic)
+    suspend fun postViewCount(data: LivestreamStatistic)
 }

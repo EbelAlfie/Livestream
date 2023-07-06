@@ -1,6 +1,7 @@
 package com.madeean.livestream.data.remotesource
 
 import com.madeean.livestream.data.model.LivestreamDataModel
+import com.madeean.livestream.data.model.LivestreamStatisticModel
 import com.madeean.livestream.data.model.LivestreamViewCountModel
 import retrofit2.http.*
 
@@ -13,5 +14,7 @@ interface ApiService {
     ): LivestreamViewCountModel
     @Headers("content-type: application/json")
     @POST("obs/view")
-    suspend fun postViewCount()
+    suspend fun postViewCount(
+        @Body liveStat: LivestreamStatisticModel
+    )
 }

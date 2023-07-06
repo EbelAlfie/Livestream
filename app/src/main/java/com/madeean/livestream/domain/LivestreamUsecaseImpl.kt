@@ -13,6 +13,6 @@ class LivestreamUsecaseImpl (private val liveStreamRepository: LivestreamReposit
     }
 
     override suspend fun postViewCount(data: LivestreamStatistic) {
-        return liveStreamRepository.postViewCount(data)
+        return liveStreamRepository.postViewCount(LivestreamStatistic.transform(data))
     }
 }

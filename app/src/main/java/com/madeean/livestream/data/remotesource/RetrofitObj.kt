@@ -8,6 +8,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitObj {
     private val BASE_URL = "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/livestreamapi/"
+    /*https://1dcd6b126c49-12390209840656915252.ngrok-free.app
+    * https://f8177cac75aa-8008867362113113571.ngrok-free.app*/
     private fun retrofitClient(): Retrofit {
         val loggingInterceptor =
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
