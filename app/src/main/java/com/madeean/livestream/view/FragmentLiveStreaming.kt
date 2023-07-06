@@ -70,14 +70,11 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
             toastPrint(BASE_URL + streamKey)
 
-            //val mediaItem = MediaItem.fromUri(BASE_URL + streamKey)
-            val mediaItem = MediaItem.Builder()
-                .setUri(BASE_URL + streamKey)
-                .setMimeType(MimeTypes.APPLICATION_MPD)
-                .build()
+            val mediaItem = buildMediaItem(BASE_URL + streamKey)
 
-            val mediaSource: MediaSource =
-                ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
+            val datasource = RtmpDataSource.Factory() //transfer listener
+
+            val mediaSource: MediaSource = ProgressiveMediaSource.Factory(datasource)
                 .createMediaSource(mediaItem)
 
             addListener(object: Player.Listener {
@@ -97,7 +94,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
                             showEndStream(binding)}
                         Player.STATE_IDLE -> {
                             toastPrint("idle")
-                            prepare()}
+                            prepare() }
                     }
                 }
                 override fun onPlayerError(error: PlaybackException) {
@@ -119,6 +116,13 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         }
     }
 
+    private fun buildMediaItem(url: String): MediaItem {
+        return MediaItem.Builder()
+            .setUri(url)
+            .setMimeType(MimeTypes.APPLICATION_MP4)
+            .build()
+    }
+
     private fun getViewCount() {
         viewCountHandler.post {
             object : Runnable {
@@ -131,8 +135,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     }
 
     private fun showEndStream(binding: CustomPlayerUiBinding) {
-        binding.rlVideoContainer.visibility = View.GONE
-        binding.rlStreamEnded.visibility = View.VISIBLE
+        binding.tvStreamEnd.visibility = View.VISIBLE
     }
 
     private fun showProgressBar(progressBar: ProgressBar, isLoading: Boolean) {
