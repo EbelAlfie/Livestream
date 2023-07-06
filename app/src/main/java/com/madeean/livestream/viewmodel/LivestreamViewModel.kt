@@ -25,5 +25,4 @@ class LivestreamViewModel() : ViewModel(){
             _livestreamkeys.postValue(usecaseImpl.getLivestreamData())
         }
     }
-
 }

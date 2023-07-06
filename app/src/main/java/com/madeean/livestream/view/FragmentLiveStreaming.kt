@@ -18,8 +18,11 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline.Window
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.rtmp.RtmpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.offline.DownloadHelper.createMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
@@ -32,7 +35,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     private lateinit var binding : CustomPlayerUiBinding
     private val viewCountHandler = Handler(Looper.getMainLooper())
     private lateinit var viewModel: FragmentLiveViewModel
-    private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
+    private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,11 +76,16 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
             val mediaItem = buildMediaItem(BASE_URL + streamKey)
 
+            /**RTMP*/
             val datasource = RtmpDataSource.Factory() //transfer listener
-
             val mediaSource: MediaSource = ProgressiveMediaSource.Factory(datasource)
                 .createMediaSource(mediaItem)
-
+            /**DASH*/
+            /*val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
+            // Create a dash media source pointing to a dash manifest uri.
+            val mediaSource: MediaSource =
+                DashMediaSource.Factory(dataSourceFactory).createMediaSource(mediaItem)
+            */
             addListener(object: Player.Listener {
                 override fun onIsLoadingChanged(isLoading: Boolean) {
                     super.onIsLoadingChanged(isLoading)
@@ -87,9 +95,15 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
                     when(playbackState) {
                         Player.STATE_READY -> {
                             showProgressBar(binding.progressLoading, false)
+                            if (exoplayer.isCommandAvailable(
+                                Player.COMMAND_SEEK_TO_DEFAULT_POSITION)) {
+                                seekToDefaultPosition()
+                                }
                             toastPrint("ready")
                         }
-                        Player.STATE_BUFFERING -> {toastPrint("buffer")}
+                        Player.STATE_BUFFERING -> {
+                            //seekTo(currentLiveOffset)
+                            toastPrint("buffer")}
                         Player.STATE_ENDED -> {
                             toastPrint("end")
                             showEndStream(binding)}
@@ -114,13 +128,21 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             setMediaSource(mediaSource)
             prepare()
             playWhenReady = true
+
         }
+    }
+
+    private fun Long.toSecond(): Long {
+        return this/ 1000000
     }
 
     private fun buildMediaItem(url: String): MediaItem {
         return MediaItem.Builder()
             .setUri(url)
-            .setMimeType(MimeTypes.APPLICATION_MP4)
+            .setMimeType(MimeTypes.APPLICATION_MATROSKA)
+            .setLiveConfiguration(
+                MediaItem.LiveConfiguration.Builder().setMaxPlaybackSpeed(1.02f).build()
+            )
             .build()
     }
 
@@ -128,7 +150,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         viewCountHandler.postDelayed(
             object : Runnable {
                 override fun run() {
-                    viewModel.getLiveViewCount(streamKey)
+                    //viewModel.getLiveViewCount(streamKey)
                     viewCountHandler.postDelayed(this, 5000)
                 }
             }
