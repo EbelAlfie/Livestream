@@ -12,12 +12,11 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 class LivestreamViewModel() : ViewModel(){
-    private val usecaseImpl: LivestreamUsecaseImpl
+    private val usecaseImpl: LivestreamUsecaseImpl = LivestreamUsecaseImpl(LivestreamRepositoryImpl())
     private val _livestreamkeys: MutableLiveData<List<LivestreamKeysData>> = MutableLiveData()
     fun getLivestreamData(): LiveData<List<LivestreamKeysData>> = _livestreamkeys
 
     init {
-        usecaseImpl = LivestreamUsecaseImpl(LivestreamRepositoryImpl())
         fetchLiveStreams()
     }
 

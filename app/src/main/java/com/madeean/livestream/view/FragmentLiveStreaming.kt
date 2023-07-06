@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,10 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline.Window
 import androidx.media3.datasource.rtmp.RtmpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.offline.DownloadHelper.createMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
@@ -24,10 +27,11 @@ import com.madeean.livestream.domain.entity.LivestreamKeysData
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.LivestreamViewModel
 
-class FragmentLiveStreaming(private val BASE_URL: String, private val streamKey: String): Fragment() {
+class FragmentLiveStreaming(private val port: Int, private val streamKey: String): Fragment() {
     private lateinit var binding : CustomPlayerUiBinding
     private val viewCountHandler = Handler(Looper.getMainLooper())
     private lateinit var viewModel: FragmentLiveViewModel
+    private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,13 +44,12 @@ class FragmentLiveStreaming(private val BASE_URL: String, private val streamKey:
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.NewInstanceFactory()
         )[FragmentLiveViewModel::class.java]
 
-        viewModel.postViewCount(streamKey, true)
+        //viewModel.postViewCount(streamKey, true)
 
         setObserver()
         initPlayer()
@@ -65,13 +68,16 @@ class FragmentLiveStreaming(private val BASE_URL: String, private val streamKey:
         exoplayer.apply {
             binding.pvVideoView.player = this
 
+            toastPrint(BASE_URL + streamKey)
+
             //val mediaItem = MediaItem.fromUri(BASE_URL + streamKey)
             val mediaItem = MediaItem.Builder()
                 .setUri(BASE_URL + streamKey)
                 .setMimeType(MimeTypes.APPLICATION_MPD)
                 .build()
 
-            val mediaSource: MediaSource = ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
+            val mediaSource: MediaSource =
+                ProgressiveMediaSource.Factory(RtmpDataSource.Factory())
                 .createMediaSource(mediaItem)
 
             addListener(object: Player.Listener {
@@ -114,14 +120,14 @@ class FragmentLiveStreaming(private val BASE_URL: String, private val streamKey:
     }
 
     private fun getViewCount() {
-        viewCountHandler.postDelayed(
+        viewCountHandler.post {
             object : Runnable {
                 override fun run() {
-                    viewModel.getLiveViewCount(streamKey)
+                    //viewModel.getLiveViewCount(streamKey)
                     viewCountHandler.postDelayed(this, 5000)
                 }
             }
-            , 5000)
+        }
     }
 
     private fun showEndStream(binding: CustomPlayerUiBinding) {
@@ -134,11 +140,11 @@ class FragmentLiveStreaming(private val BASE_URL: String, private val streamKey:
     }
 
     private fun toastPrint(s: String) {
-        Toast.makeText(context, s, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), s, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
-        viewModel.postViewCount(streamKey, false)
+        //viewModel.postViewCount(streamKey, false)
         super.onDestroy()
     }
 }

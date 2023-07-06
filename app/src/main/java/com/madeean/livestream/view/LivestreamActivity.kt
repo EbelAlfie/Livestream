@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +17,6 @@ class LivestreamActivity : AppCompatActivity() {
   private lateinit var binding:ActivityMainBinding
   private lateinit var adapter: FragmentAdapter
   private var port: Int = 0
-  private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/"
   private lateinit var viewModel: LivestreamViewModel
 
   companion object {
@@ -42,23 +42,26 @@ class LivestreamActivity : AppCompatActivity() {
     )[LivestreamViewModel::class.java]
 
     setViewPager()
-    setObserver(viewModel)
+    setObserver()
   }
 
-  private fun setObserver(viewModel: LivestreamViewModel) {
+  private fun setObserver() {
     viewModel.getLivestreamData().observe(this) {
-      adapter.apply {
-        for(i in it){
-          addFragment(FragmentLiveStreaming(BASE_URL, i.streamKey))
+      for(i in it){
+        val videoFragment = FragmentLiveStreaming(port, i.streamKey)
+        Bundle().apply {
+          putInt("port", port)
+          putString("key", i.streamKey)
+          videoFragment.arguments = this
         }
+        adapter.addFragment(videoFragment)
       }
     }
   }
 
   private fun setViewPager() {
-    adapter = FragmentAdapter(
-      supportFragmentManager, lifecycle
-    )
+    adapter = FragmentAdapter(supportFragmentManager, lifecycle)
     binding.vpLiveStream.adapter = adapter
+    //adapter.addFragment(FragmentLiveStreaming(port,"cacingtanah"))
   }
 }
