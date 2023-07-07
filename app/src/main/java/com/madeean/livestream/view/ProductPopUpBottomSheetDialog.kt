@@ -13,16 +13,16 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.madeean.livestream.R
 import com.madeean.livestream.databinding.BottomsheetProductPopupBinding
-import com.madeean.livestream.domain.products.model.ModelProductList
+import com.madeean.livestream.domain.products.model.ModelProductListDomain
 
 
-class ProductPopUpBottomSheetDialog(val listData: ArrayList<ModelProductList>): BottomSheetDialogFragment() {
+class ProductPopUpBottomSheetDialog(val listData: ArrayList<ModelProductListDomain>): BottomSheetDialogFragment() {
     private lateinit var binding: BottomsheetProductPopupBinding
     private lateinit var adapter:AdapterProductList
 //    private var listData:ArrayList<ModelProductList> = arrayListOf()
 
     companion object {
-        fun newInstance(listData:ArrayList<ModelProductList>): ProductPopUpBottomSheetDialog {
+        fun newInstance(listData:ArrayList<ModelProductListDomain>): ProductPopUpBottomSheetDialog {
             return ProductPopUpBottomSheetDialog(listData)
         }
     }
