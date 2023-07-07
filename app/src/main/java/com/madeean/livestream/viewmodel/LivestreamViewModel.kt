@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.madeean.livestream.data.repository.LivestreamRepositoryImpl
 import com.madeean.livestream.domain.LivestreamUsecaseImpl
-import com.madeean.livestream.domain.entity.LivestreamKeysData
+import com.madeean.livestream.domain.entity.LivestreamData
 import com.madeean.livestream.domain.entity.LivestreamStatistic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -13,8 +13,8 @@ import kotlinx.coroutines.launch
 
 class LivestreamViewModel() : ViewModel(){
     private val usecaseImpl: LivestreamUsecaseImpl = LivestreamUsecaseImpl(LivestreamRepositoryImpl())
-    private val _livestreamkeys: MutableLiveData<List<LivestreamKeysData>> = MutableLiveData()
-    fun getLivestreamData(): LiveData<List<LivestreamKeysData>> = _livestreamkeys
+    private val _livestreamkeys: MutableLiveData<List<LivestreamData>> = MutableLiveData()
+    fun getLivestreamData(): LiveData<List<LivestreamData>> = _livestreamkeys
 
     init {
         fetchLiveStreams()

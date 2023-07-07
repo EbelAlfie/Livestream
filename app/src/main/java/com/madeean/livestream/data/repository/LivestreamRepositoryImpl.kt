@@ -5,11 +5,10 @@ import com.madeean.livestream.data.model.LivestreamDataModel
 import com.madeean.livestream.data.model.LivestreamStatisticModel
 import com.madeean.livestream.data.model.LivestreamViewCountModel
 import com.madeean.livestream.data.remotesource.RetrofitObj
-import com.madeean.livestream.domain.entity.LivestreamKeysData
-import com.madeean.livestream.domain.entity.LivestreamStatistic
+import com.madeean.livestream.domain.entity.LivestreamData
 
 class LivestreamRepositoryImpl: LivestreamRepository {
-    override suspend fun getLivestreamData(): List<LivestreamKeysData> {
+    override suspend fun getLivestreamData(): List<LivestreamData> {
         return try {
             val data = RetrofitObj.apiService().getLiveStreamData()
             LivestreamDataModel.transform(data)

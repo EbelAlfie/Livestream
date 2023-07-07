@@ -1,11 +1,11 @@
 package com.madeean.livestream.domain
 
 import com.madeean.livestream.data.repository.LivestreamRepositoryImpl
-import com.madeean.livestream.domain.entity.LivestreamKeysData
+import com.madeean.livestream.domain.entity.LivestreamData
 import com.madeean.livestream.domain.entity.LivestreamStatistic
 
 class LivestreamUsecaseImpl (private val liveStreamRepository: LivestreamRepositoryImpl): LivestreamUsecase {
-    override suspend fun getLivestreamData(): List<LivestreamKeysData> {
+    override suspend fun getLivestreamData(): List<LivestreamData> {
         return liveStreamRepository.getLivestreamData()
     }
     override suspend fun getLivestreamViewCount(streamKey: String): Int {

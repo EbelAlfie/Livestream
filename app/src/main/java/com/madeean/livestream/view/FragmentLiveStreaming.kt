@@ -4,13 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -18,18 +16,12 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline.Window
-import androidx.media3.datasource.DataSource
-import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.rtmp.RtmpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.dash.DashMediaSource
-import androidx.media3.exoplayer.offline.DownloadHelper.createMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
-import com.madeean.livestream.domain.entity.LivestreamKeysData
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
-import com.madeean.livestream.viewmodel.LivestreamViewModel
 
 class FragmentLiveStreaming(private val port: Int, private val streamKey: String): Fragment() {
     private lateinit var binding : CustomPlayerUiBinding
@@ -80,6 +72,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             val datasource = RtmpDataSource.Factory() //transfer listener
             val mediaSource: MediaSource = ProgressiveMediaSource.Factory(datasource)
                 .createMediaSource(mediaItem)
+
             /**DASH*/
             /*val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
             // Create a dash media source pointing to a dash manifest uri.
@@ -89,12 +82,11 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             addListener(object: Player.Listener {
                 override fun onIsLoadingChanged(isLoading: Boolean) {
                     super.onIsLoadingChanged(isLoading)
-                    showProgressBar(binding.progressLoading, isLoading)
+
                 }
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     when(playbackState) {
                         Player.STATE_READY -> {
-                            showProgressBar(binding.progressLoading, false)
                             if (exoplayer.isCommandAvailable(
                                 Player.COMMAND_SEEK_TO_DEFAULT_POSITION)) {
                                 seekToDefaultPosition()
@@ -159,10 +151,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
     private fun showEndStream(binding: CustomPlayerUiBinding) {
         binding.tvStreamEnd.visibility = View.VISIBLE
-    }
-
-    private fun showProgressBar(progressBar: ProgressBar, isLoading: Boolean) {
-        progressBar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
     }
 
     private fun toastPrint(s: String) {

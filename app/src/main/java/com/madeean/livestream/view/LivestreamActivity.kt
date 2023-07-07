@@ -3,13 +3,9 @@ package com.madeean.livestream.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.madeean.livestream.databinding.ActivityMainBinding
-import com.madeean.livestream.domain.entity.LivestreamKeysData
 import com.madeean.livestream.viewmodel.LivestreamViewModel
 
 
