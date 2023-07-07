@@ -24,10 +24,8 @@ import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
-import com.madeean.livestream.domain.products.model.ModelProductList
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
-import com.madeean.livestream.viewmodel.LivestreamViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
 
 class FragmentLiveStreaming(private val port: Int, private val streamKey: String): Fragment() {
@@ -63,8 +61,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         setObserver()
         initPlayer()
         getViewCount()
-        setDataItem()
-        initView()
         setObserveProduct()
         getDataProduct()
         setOnClickBasket()
@@ -105,7 +101,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         val exoplayer = ExoPlayer.Builder(requireContext()).build()
         binding.pvVideoView.player = exoplayer
         exoplayer.apply {
-            val mediaItem = buildMediaItem(TEST_DASH_URL)
+            val mediaItem = buildMediaItem(BASE_RTMP_URL + streamKey)
             setMediaSource(createDataSource(mediaItem))
 
             // Update the track selection parameters to only pick standard definition tracks
@@ -161,7 +157,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             .createMediaSource(mediaItem)
         val dashMediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory)
             .createMediaSource(mediaItem)
-        return dashMediaSource
+        return rtmpMediaSource
     }
 
     private fun Long.toSecond(): Long = this/ 1000000
