@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
   <RelativeLayout
       android:id="@+id/rl_video_container"
       android:layout_width="match_parent"
@@ -16,12 +18,12 @@
     <androidx.media3.ui.PlayerView
         android:id="@+id/pv_video_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:surface_type="texture_view"
-        app:use_controller="false"
-        app:show_buffering="always"
-        />
+        android:layout_height="match_parent"/>
 
+    <ProgressBar
+        android:id="@+id/progress_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <TextView
         android:id="@+id/tv_stream_end"
         android:layout_width="match_parent"
@@ -34,12 +36,148 @@
         android:layout_centerInParent="true"
         android:textColor="@color/white"/>
   </RelativeLayout>
-  <include
-      android:id="@+id/btn_basket_popup"
-      layout="@layout/view_basket_icon_livestream"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_alignParentStart="true"
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_margin="@dimen/size_8"
       android:layout_alignParentBottom="true"
-      android:layout_margin="@dimen/size_8"/>
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/highlight_product"
+        android:visibility="gone"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btn_basket_popup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+      <ImageView
+          android:id="@+id/img_product"
+          android:layout_width="@dimen/image_85"
+          android:layout_height="0dp"
+          android:scaleType="fitStart"
+          android:layout_marginVertical="@dimen/spacing_normal"
+          tools:ignore="ContentDescription"
+          tools:src="@drawable/default_image"
+          app:layout_constraintBottom_toBottomOf="@id/wrapper_product"
+          app:layout_constraintTop_toTopOf="@id/wrapper_product"
+          app:layout_constraintStart_toStartOf="parent"
+          />
+
+      <LinearLayout
+          android:id="@+id/wrapper_product"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:padding="@dimen/spacing_normal"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintStart_toEndOf="@+id/img_product"
+          app:layout_constraintTop_toTopOf="parent"
+          >
+
+        <!--style="@style/TextView.Small"-->
+        <TextView
+            android:id="@+id/txt_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/img_product"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Oishi Sponge Crunch Mochaccino 120g "
+            />
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/wrapper_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:alignContent="flex_start"
+            app:alignItems="flex_start"
+            app:flexWrap="wrap">
+
+          <!--style="@style/TextView.Bold"-->
+          <TextView
+              android:id="@+id/txt_product_price"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginEnd="@dimen/spacing_small"
+              android:ellipsize="end"
+              android:maxLines="1"
+              app:layout_alignSelf="center"
+              tools:text="Rp. 10.000.000.00"
+              />
+
+          <include
+              android:id="@+id/view_discount"
+              layout="@layout/view_item_product_discount"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              app:layout_alignSelf="center"
+              />
+
+        </com.google.android.flexbox.FlexboxLayout>
+        <!--style="@style/TextView.Tiny"-->
+
+
+        <ViewAnimator
+            android:id="@+id/va_quantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_11"
+            android:measureAllChildren="false"
+            tools:visibility="visible"
+            >
+
+          <!--style="@style/ButtonV2"-->
+          <TextView
+              android:id="@+id/btn_add_to_cart"
+              android:layout_width="wrap_content"
+              android:layout_height="@dimen/small_button_height"
+              android:layout_gravity="end"
+              android:paddingHorizontal="@dimen/spacing_normal"
+              android:paddingVertical="@dimen/size_5"
+              android:text="+ Keranjang"
+              />
+
+          <include
+              android:id="@+id/view_quantity"
+              layout="@layout/view_quantity_v3"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
+              />
+
+          <!--style="@style/Bullet"-->
+          <TextView
+              android:id="@+id/txt_out_of_stock"
+              android:layout_width="wrap_content"
+              android:layout_height="@dimen/size_32"
+              android:layout_gravity="end"
+              android:text="Stok Kosong"
+              android:visibility="gone"
+              tools:visibility="visible"
+              />
+
+        </ViewAnimator>
+
+      </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/btn_basket_popup"
+        layout="@layout/view_basket_icon_livestream"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
 </RelativeLayout>

@@ -23,6 +23,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import com.bumptech.glide.Glide
+import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
@@ -35,7 +37,9 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     private lateinit var productViewModel: ProductsViewModel
     private val BASE_RTMP_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
     private val TEST_DASH_URL = "https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"
-    private lateinit var listData:ArrayList<ModelProductListDomain>
+    private var listData:ArrayList<ModelProductListDomain> = arrayListOf()
+
+  private lateinit var productHighlight: ModelProductListDomain
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,10 +55,11 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             this,
             ViewModelProvider.NewInstanceFactory()
         )[FragmentLiveViewModel::class.java]
-    productViewModel = ViewModelProvider(
-      this,
-      ViewModelProvider.NewInstanceFactory()
-    )[ProductsViewModel::class.java]
+
+        productViewModel = ViewModelProvider(
+          this,
+          ViewModelProvider.NewInstanceFactory()
+        )[ProductsViewModel::class.java]
 
         viewModel.postViewCount(streamKey, true)
 
@@ -77,6 +82,30 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
       listData.clear()
       listData = it
       binding.btnBasketPopup.tvMiniBadge.text = listData.size.toString()
+
+      var position = 0
+
+      it.forEach { product ->
+        if (product.isHighlight == 1) {
+          position++
+          productHighlight = ModelProductListDomain(
+            id = product.id,
+            name = product.name,
+            image = product.image,
+            productPrice = product.productPrice,
+            productSpesialPrice = product.productSpesialPrice,
+            productDiscount = product.productDiscount,
+            isHighlight = product.isHighlight,
+            isActive = product.isActive
+          )
+          setHighlightProductView(product)
+          binding.highlightProduct.visibility = View.VISIBLE
+        }
+      }
+
+      if (position <= 0) {
+        binding.highlightProduct.visibility = View.GONE
+      }
     }
   }
 
@@ -96,7 +125,19 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         }
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
+  private fun setHighlightProductView(product: ModelProductListDomain) {
+    Glide.with(this).load(product.image)
+      .placeholder(requireActivity().getDrawable(R.drawable.default_image)).into(binding.imgProduct)
+    binding.apply {
+      txtProductName.text = product.name
+      txtProductPrice.text = product.productPrice.toString()
+      viewDiscount.tvDiscount.text = product.productDiscount.toString()
+      viewDiscount.tvDiscountLabel.text = product.productSpesialPrice.toString()
+    }
+  }
+
+
+  @SuppressLint("UnsafeOptInUsageError")
     private fun initPlayer() {
         val exoplayer = ExoPlayer.Builder(requireContext()).build()
         binding.pvVideoView.player = exoplayer
