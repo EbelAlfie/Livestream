@@ -3,6 +3,7 @@ package com.madeean.livestream.view
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.madeean.livestream.databinding.ActivityMainBinding
@@ -43,6 +44,7 @@ class LivestreamActivity : AppCompatActivity() {
 
   private fun setObserver() {
     viewModel.getLivestreamData().observe(this) {
+      if (it.isEmpty()) Toast.makeText(this, "No streams at the moment", Toast.LENGTH_SHORT).show()
       for(i in it){
         val videoFragment = FragmentLiveStreaming(port, i.streamKey)
         Bundle().apply {
