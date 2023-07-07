@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_rounded_bottomsheet"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <!--change text view style to text view bold alfagift sstyle-->
+        <TextView
+            android:id="@+id/tv_title"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_20"
+            android:layout_marginTop="@dimen/spacing_normal"
+            android:text="Produk tersedia"
+            android:textAlignment="center"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_product_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_product_list_v2"/>
+    </LinearLayout>
+
+</FrameLayout>

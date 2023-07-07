@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <dimen name="toolbar_title_size">20sp</dimen>
+  <dimen name="none">0dp</dimen>
+
+  <!--- SPACING -->
+  <dimen name="spacing_large">32dp</dimen>
+  <dimen name="spacing_normal">16dp</dimen>
+  <dimen name="spacing_small">8dp</dimen>
+  <dimen name="spacing_tiny">5dp</dimen>
+
+  <dimen name="spacing_minus_15">-15dp</dimen>
+  <dimen name="spacing_3">3dp</dimen>
+  <dimen name="spacing_4">4dp</dimen>
+  <dimen name="spacing_10">10dp</dimen>
+  <dimen name="spacing_11">11dp</dimen>
+  <dimen name="spacing_12">12dp</dimen>
+  <dimen name="spacing_14">14dp</dimen>
+  <dimen name="spacing_16">16dp</dimen>
+  <dimen name="spacing_18">18dp</dimen>
+  <dimen name="spacing_20">20dp</dimen>
+  <dimen name="spacing_22">22dp</dimen>
+  <dimen name="spacing_24">24dp</dimen>
+  <dimen name="spacing_26">26dp</dimen>
+  <dimen name="spacing_30">30dp</dimen>
+  <dimen name="spacing_32">32dp</dimen>
+  <dimen name="spacing_29">29dp</dimen>
+  <dimen name="spacing_60">60dp</dimen>
+
+  <dimen name="dp_72">72dp</dimen>
+
+  <dimen name="action_bar_size" tools:ignore="PrivateResource">?attr/actionBarSize</dimen>
+
+  <!-- FONT SIZE -->
+  <!--<dimen name="font_tiny">10sp</dimen>
+  <dimen name="font_small">12sp</dimen>
+  <dimen name="font_normal">14sp</dimen>
+  <dimen name="font_large">16sp</dimen>
+  <dimen name="font_huge">18sp</dimen>-->
+
+  <dimen name="font_20">20sp</dimen>
+  <dimen name="font_24">24sp</dimen>
+  <dimen name="font_32">32sp</dimen>
+
+  <!-- SIZE -->
+  <dimen name="size_1">1dp</dimen>
+  <dimen name="size_2">2dp</dimen>
+  <dimen name="size_3">3dp</dimen>
+  <dimen name="size_4">4dp</dimen>
+  <dimen name="size_5">5dp</dimen>
+  <dimen name="size_6">6dp</dimen>
+  <dimen name="size_8">8dp</dimen>
+  <dimen name="size_10">10dp</dimen>
+  <dimen name="size_12">12dp</dimen>
+  <dimen name="size_13">13dp</dimen>
+  <dimen name="size_15">15dp</dimen>
+  <dimen name="size_16">16dp</dimen>
+  <dimen name="size_17">17dp</dimen>
+  <dimen name="size_20">20dp</dimen>
+  <dimen name="size_22">22dp</dimen>
+  <dimen name="size_24">24dp</dimen>
+  <dimen name="size_25">25dp</dimen>
+  <dimen name="size_30">30dp</dimen>
+  <dimen name="size_32">32dp</dimen>
+  <dimen name="size_38">38dp</dimen>
+  <dimen name="size_40">40dp</dimen>
+  <dimen name="size_48">48dp</dimen>
+  <dimen name="size_45">45dp</dimen>
+  <dimen name="size_50">50dp</dimen>
+  <dimen name="size_56">56dp</dimen>
+  <dimen name="size_72">72dp</dimen>
+  <dimen name="size_80">80dp</dimen>
+  <dimen name="size_90">90dp</dimen>
+  <dimen name="size_100">100dp</dimen>
+  <dimen name="size_112">112dp</dimen>
+  <dimen name="size_146">146dp</dimen>
+  <dimen name="size_240">240dp</dimen>
+  <dimen name="size_256">256dp</dimen>
+  <dimen name="radius_small">5dp</dimen>
+  <dimen name="radius_large">25dp</dimen>
+  <dimen name="button_height">48dp</dimen>
+  <dimen name="small_button_height">32dp</dimen>
+  <dimen name="tiny_button_height">24dp</dimen>
+  <dimen name="small_progress">30dp</dimen>
+  <dimen name="line_1">1dp</dimen>
+  <dimen name="line_2">2dp</dimen>
+  <dimen name="toolbar_height_89">89dp</dimen>
+
+  <!-- OTHER SIZE -->
+  <dimen name="banner_height">150dp</dimen>
+  <dimen name="edittext_height">48dp</dimen>
+  <dimen name="profile_picture_thumb">80dp</dimen>
+  <dimen name="image_12">12dp</dimen>
+  <dimen name="image_16">16dp</dimen>
+  <dimen name="image_20">20dp</dimen>
+  <dimen name="image_22">22dp</dimen>
+  <dimen name="image_24">24dp</dimen>
+  <dimen name="image_32">32dp</dimen>
+  <dimen name="image_36">36dp</dimen>
+  <dimen name="image_40">40dp</dimen>
+  <dimen name="image_48">48dp</dimen>
+  <dimen name="image_56">56dp</dimen>
+  <dimen name="image_72">72dp</dimen>
+  <dimen name="image_78">78dp</dimen>
+  <dimen name="image_84">84dp</dimen>
+  <dimen name="image_85">85dp</dimen>
+  <dimen name="image_95">95dp</dimen>
+  <dimen name="image_150">150dp</dimen>
+  <dimen name="image_180">180dp</dimen>
+  <dimen name="image_200">200dp</dimen>
+
+  <dimen name="title_width">200dp</dimen>
+  <dimen name="wishlist.count.width">70dp</dimen>
+
+  <dimen name="welcome.logo.width">80dp</dimen>
+  <dimen name="welcome.logo.height">29dp</dimen>
+
+  <dimen name="register.main.label.margin_top">50dp</dimen>
+  <dimen name="register.button.social.size">56dp</dimen>
+
+  <dimen name="selector.item.height">56dp</dimen>
+  <dimen name="home.container.ponta.height">81dp</dimen>
+
+  <dimen name="logo.alfamart.width.small">56dp</dimen>
+  <dimen name="logo.alfamart.height.small">20dp</dimen>
+
+  <dimen name="item.offer.width">160dp</dimen>
+  <dimen name="redeem.success.image.width">84dp</dimen>
+  <dimen name="redeem.success.image.height">76dp</dimen>
+
+  <dimen name="item.product.stamp.width">240dp</dimen>
+  <dimen name="voucher.item.width.view_all">160dp</dimen>
+  <dimen name="end_of_page_height">200dp</dimen>
+
+  <dimen name="highlight_feature_width">150dp</dimen>
+  <dimen name="highlight_feature_height">90dp</dimen>
+
+  <dimen name="banner_v2_height">176dp</dimen>
+  <dimen name="banner_v3_height">156dp</dimen>
+  <dimen name="banner_v3_half_height">78dp</dimen>
+  <dimen name="home_white_background_height">330dp</dimen>
+
+  <dimen name="size_4_negative">-4dp</dimen>
+  <dimen name="size_8_negative">-8dp</dimen>
+
+  <dimen name="sp_10">10sp</dimen>
+  <dimen name="sp_12">12sp</dimen>
+  <dimen name="sp_14">14sp</dimen>
+  <dimen name="sp_16">16sp</dimen>
+  <dimen name="margin_section_home">12dp</dimen>
+
+  <dimen name="showcase_card_radius">8dp</dimen>
+
+  <dimen name="showcase_margin_20dp">20dp</dimen>
+  <dimen name="showcase_margin_16dp">16dp</dimen>
+  <dimen name="showcase_margin_12dp">12dp</dimen>
+  <dimen name="showcase_padding_8dp">8dp</dimen>
+  <dimen name="showcase_padding_16dp">16dp</dimen>
+
+  <dimen name="icon_basket_count">16dp</dimen>
+  <dimen name="spacing_8">8dp</dimen>
+
+  <dimen name="fc_font_size_body_one">16sp</dimen>
+</resources>

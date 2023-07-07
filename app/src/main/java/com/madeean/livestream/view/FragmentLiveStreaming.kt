@@ -28,6 +28,7 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.entity.LivestreamKeysData
+import com.madeean.livestream.domain.products.model.ModelProductList
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.LivestreamViewModel
 
@@ -36,7 +37,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     private val viewCountHandler = Handler(Looper.getMainLooper())
     private lateinit var viewModel: FragmentLiveViewModel
     private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
-
+    private lateinit var listData:ArrayList<ModelProductList>
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,6 +59,46 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         setObserver()
         initPlayer()
         getViewCount()
+        setDataItem()
+        initView()
+        setOnClickBasket()
+    }
+
+    private fun initView() {
+        binding.btnBasketPopup.tvMiniBadge.text = listData.size.toString()
+    }
+
+    private fun setDataItem() {
+        val data1 = ModelProductList(
+            name = "Product 1",
+            price = "Rp. 100.000",
+            discountPrice = "Rp. 50.000",
+            discountRate = "50%"
+        )
+        val data2 = ModelProductList(
+            name = "Product 2",
+            price = "Rp. 100.000",
+            discountPrice = "Rp. 50.000",
+            discountRate = "50%"
+        )
+        val data3 = ModelProductList(
+            name = "Product 3",
+            price = "Rp. 100.000",
+            discountPrice = "Rp. 50.000",
+            discountRate = "50%"
+        )
+
+        listData = arrayListOf(data1,data2,data3)
+    }
+
+    private fun setOnClickBasket() {
+        binding.btnBasketPopup.containerImage.setOnClickListener {
+            ProductPopUpBottomSheetDialog.newInstance(listData)
+                .show(
+                    requireActivity().supportFragmentManager,
+                    ProductPopUpBottomSheetDialog::class.java.simpleName
+                )
+        }
     }
 
     private fun setObserver() {
@@ -150,7 +191,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         viewCountHandler.postDelayed(
             object : Runnable {
                 override fun run() {
-                    //viewModel.getLiveViewCount(streamKey)
+                    viewModel.getLiveViewCount(streamKey)
                     viewCountHandler.postDelayed(this, 5000)
                 }
             }
