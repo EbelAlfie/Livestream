@@ -30,51 +30,51 @@ import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
 
-class FragmentLiveStreaming(private val port: Int, private val streamKey: String): Fragment() {
-    private lateinit var binding : CustomPlayerUiBinding
-    private val viewCountHandler = Handler(Looper.getMainLooper())
-    private lateinit var viewModel: FragmentLiveViewModel
-    private lateinit var productViewModel: ProductsViewModel
-    private val BASE_RTMP_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
-    private val TEST_DASH_URL = "https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"
-    private var listData:ArrayList<ModelProductListDomain> = arrayListOf()
+class FragmentLiveStreaming(private val port: Int, private val streamKey: String) : Fragment() {
+  private lateinit var binding: CustomPlayerUiBinding
+  private val viewCountHandler = Handler(Looper.getMainLooper())
+  private lateinit var viewModel: FragmentLiveViewModel
+  private lateinit var productViewModel: ProductsViewModel
+  private val BASE_RTMP_URL: String =
+    "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
+  private val TEST_DASH_URL =
+    "https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"
+  private var listData: ArrayList<ModelProductListDomain> = arrayListOf()
 
   private lateinit var productHighlight: ModelProductListDomain
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = CustomPlayerUiBinding.inflate(inflater)
-        return binding.root
-    }
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
+    binding = CustomPlayerUiBinding.inflate(inflater)
+    return binding.root
+  }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.NewInstanceFactory()
-        )[FragmentLiveViewModel::class.java]
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    viewModel = ViewModelProvider(
+      this,
+      ViewModelProvider.NewInstanceFactory()
+    )[FragmentLiveViewModel::class.java]
 
-        productViewModel = ViewModelProvider(
-          this,
-          ViewModelProvider.NewInstanceFactory()
-        )[ProductsViewModel::class.java]
+    productViewModel = ViewModelProvider(
+      this,
+      ViewModelProvider.NewInstanceFactory()
+    )[ProductsViewModel::class.java]
 
-        viewModel.postViewCount(streamKey, true)
 
-        setObserver()
-        initPlayer()
-        getViewCount()
-        setObserveProduct()
-        getDataProduct()
-        setOnClickBasket()
-    }
+    setObserver()
+    initPlayer()
+    getViewCount()
+    setObserveProduct()
+    getDataProduct()
+    setOnClickBasket()
+  }
 
   private fun getDataProduct() {
     productViewModel.getActiveProduct()
   }
-
 
 
   private fun setObserveProduct() {
@@ -109,21 +109,21 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     }
   }
 
-    private fun setOnClickBasket() {
-        binding.btnBasketPopup.containerImage.setOnClickListener {
-            ProductPopUpBottomSheetDialog.newInstance(listData)
-                .show(
-                    requireActivity().supportFragmentManager,
-                    ProductPopUpBottomSheetDialog::class.java.simpleName
-                )
-        }
+  private fun setOnClickBasket() {
+    binding.btnBasketPopup.containerImage.setOnClickListener {
+      ProductPopUpBottomSheetDialog.newInstance(listData)
+        .show(
+          requireActivity().supportFragmentManager,
+          ProductPopUpBottomSheetDialog::class.java.simpleName
+        )
     }
+  }
 
-    private fun setObserver() {
-        viewModel.getLivestreamViewCount().observe(viewLifecycleOwner) {
-            binding.layoutLiveView.tvViews.text = it.toString()
-        }
+  private fun setObserver() {
+    viewModel.getLivestreamViewCount().observe(viewLifecycleOwner) {
+      binding.layoutLiveView.tvViews.text = it.toString()
     }
+  }
 
   private fun setHighlightProductView(product: ModelProductListDomain) {
     Glide.with(this).load(product.image)
@@ -137,107 +137,121 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   }
 
 
-    @SuppressLint("UnsafeOptInUsageError")
-    private fun initPlayer() {
-        val exoplayer = ExoPlayer.Builder(requireContext()).build()
-        binding.pvVideoView.player = exoplayer
-        exoplayer.apply {
-            val mediaItem = buildMediaItem(BASE_RTMP_URL + streamKey)
-            setMediaSource(createDataSource(mediaItem))
+  @SuppressLint("UnsafeOptInUsageError")
+  private fun initPlayer() {
+    val exoplayer = ExoPlayer.Builder(requireContext()).build()
+    binding.pvVideoView.player = exoplayer
+    exoplayer.apply {
+      val mediaItem = buildMediaItem(BASE_RTMP_URL + streamKey)
+      setMediaSource(createDataSource(mediaItem))
 
-            // Update the track selection parameters to only pick standard definition tracks
-            trackSelectionParameters = trackSelectionParameters.buildUpon()
-                .setMaxVideoSizeSd()
-                .build()
+      // Update the track selection parameters to only pick standard definition tracks
+      trackSelectionParameters = trackSelectionParameters.buildUpon()
+        .setMaxVideoSizeSd()
+        .build()
 
-            addListener(object: Player.Listener {
-                override fun onIsLoadingChanged(isLoading: Boolean) {
-                    super.onIsLoadingChanged(isLoading)
-                }
-
-                override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
-                    super.onAvailableCommandsChanged(availableCommands)
-                    if(availableCommands.contains(Player.COMMAND_SEEK_TO_NEXT))
-                        seekToNext()
-                }
-
-                override fun onEvents(player: Player, events: Player.Events) {
-                    super.onEvents(player, events)
-                }
-                override fun onPlaybackStateChanged(playbackState: Int) {
-                    when(playbackState) {
-                        Player.STATE_READY -> {
-                            if (isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT))
-                                seekToNext()
-                            toastPrint("ready")
-                        }
-                        Player.STATE_BUFFERING -> {
-                            toastPrint("buffer")}
-                        Player.STATE_ENDED -> {
-                            toastPrint("end")
-                            showEndStream(binding)}
-                        Player.STATE_IDLE -> {
-                            toastPrint("idle")
-                            prepare() }
-                    }
-                }
-                override fun onPlayerError(error: PlaybackException) {
-                    super.onPlayerError(error)
-                    toastPrint(error.toString())
-                    prepare()
-                }
-            })
-
-            prepare()
-            playWhenReady = true
+      addListener(object : Player.Listener {
+        override fun onIsLoadingChanged(isLoading: Boolean) {
+          super.onIsLoadingChanged(isLoading)
         }
+
+        override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
+          super.onAvailableCommandsChanged(availableCommands)
+          if (availableCommands.contains(Player.COMMAND_SEEK_TO_NEXT))
+            seekToNext()
+        }
+
+        override fun onEvents(player: Player, events: Player.Events) {
+          super.onEvents(player, events)
+        }
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+          when (playbackState) {
+            Player.STATE_READY -> {
+              if (isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT))
+                seekToNext()
+              toastPrint("ready")
+            }
+            Player.STATE_BUFFERING -> {
+              toastPrint("buffer")
+            }
+            Player.STATE_ENDED -> {
+              toastPrint("end")
+              showEndStream(binding)
+            }
+            Player.STATE_IDLE -> {
+              toastPrint("idle")
+              prepare()
+            }
+          }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+          super.onPlayerError(error)
+          toastPrint(error.toString())
+          prepare()
+        }
+      })
+
+      prepare()
+      playWhenReady = true
     }
+  }
 
-    @SuppressLint("UnsafeOptInUsageError")
-    private fun createDataSource(mediaItem: MediaItem): MediaSource {
-        val rtmpDatasourceFactory = RtmpDataSource.Factory() //transfer listener
-        val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
+  @SuppressLint("UnsafeOptInUsageError")
+  private fun createDataSource(mediaItem: MediaItem): MediaSource {
+    val rtmpDatasourceFactory = RtmpDataSource.Factory() //transfer listener
+    val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
 
-        val rtmpMediaSource = ProgressiveMediaSource.Factory(rtmpDatasourceFactory)
-            .createMediaSource(mediaItem)
-        val dashMediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory)
-            .createMediaSource(mediaItem)
-        return rtmpMediaSource
-    }
+    val rtmpMediaSource = ProgressiveMediaSource.Factory(rtmpDatasourceFactory)
+      .createMediaSource(mediaItem)
+    val dashMediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory)
+      .createMediaSource(mediaItem)
+    return rtmpMediaSource
+  }
 
-    private fun Long.toSecond(): Long = this/ 1000000
+  private fun Long.toSecond(): Long = this / 1000000
 
-    private fun buildMediaItem(url: String): MediaItem {
-        return MediaItem.Builder().setUri(url)
-            .setLiveConfiguration(
-                MediaItem.LiveConfiguration.Builder().setMaxPlaybackSpeed(1.02f).build()
-            )
-            .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA)
-            .build()
-    }
+  private fun buildMediaItem(url: String): MediaItem {
+    return MediaItem.Builder().setUri(url)
+      .setLiveConfiguration(
+        MediaItem.LiveConfiguration.Builder().setMaxPlaybackSpeed(1.02f).build()
+      )
+      .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA)
+      .build()
+  }
 
-    private fun getViewCount() {
-        viewCountHandler.postDelayed(
-            object : Runnable {
-                override fun run() {
+  private fun getViewCount() {
+    viewCountHandler.postDelayed(
+      object : Runnable {
+        override fun run() {
           viewModel.getLiveViewCount(streamKey)
           getDataProduct()
-                    viewCountHandler.postDelayed(this, 5000)
-                }
-            }
-        , 5000)
-    }
+          viewCountHandler.postDelayed(this, 500)
+        }
+      }, 500)
+  }
 
-    private fun showEndStream(binding: CustomPlayerUiBinding) {
-        binding.tvStreamEnd.visibility = View.VISIBLE
-    }
+  private fun showEndStream(binding: CustomPlayerUiBinding) {
+    binding.tvStreamEnd.visibility = View.VISIBLE
+  }
 
-    private fun toastPrint(s: String) {
-        Toast.makeText(requireContext(), s, Toast.LENGTH_SHORT).show()
-    }
+  private fun toastPrint(s: String) {
+    Toast.makeText(requireContext(), s, Toast.LENGTH_SHORT).show()
+  }
 
-    override fun onDestroy() {
-        viewModel.postViewCount(streamKey, false)
-        super.onDestroy()
-    }
+  override fun onDestroy() {
+    viewModel.postViewCount(streamKey, false)
+    super.onDestroy()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    viewModel.postViewCount(streamKey, true)
+  }
+
+  override fun onPause() {
+    super.onPause()
+    viewModel.postViewCount(streamKey, false)
+  }
 }
