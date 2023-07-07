@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -20,6 +23,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import com.bumptech.glide.Glide
+import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
@@ -33,6 +38,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     private val BASE_RTMP_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
     private val TEST_DASH_URL = "https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"
     private var listData:ArrayList<ModelProductListDomain> = arrayListOf()
+
+  private lateinit var productHighlight: ModelProductListDomain
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,6 +55,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             this,
             ViewModelProvider.NewInstanceFactory()
         )[FragmentLiveViewModel::class.java]
+
         productViewModel = ViewModelProvider(
           this,
           ViewModelProvider.NewInstanceFactory()
@@ -67,11 +75,37 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     productViewModel.getActiveProduct()
   }
 
+
+
   private fun setObserveProduct() {
     productViewModel.products.observe(viewLifecycleOwner) {
       listData.clear()
       listData = it
       binding.btnBasketPopup.tvMiniBadge.text = listData.size.toString()
+
+      var position = 0
+
+      it.forEach { product ->
+        if (product.isHighlight == 1) {
+          position++
+          productHighlight = ModelProductListDomain(
+            id = product.id,
+            name = product.name,
+            image = product.image,
+            productPrice = product.productPrice,
+            productSpesialPrice = product.productSpesialPrice,
+            productDiscount = product.productDiscount,
+            isHighlight = product.isHighlight,
+            isActive = product.isActive
+          )
+          setHighlightProductView(product)
+          binding.highlightProduct.visibility = View.VISIBLE
+        }
+      }
+
+      if (position <= 0) {
+        binding.highlightProduct.visibility = View.GONE
+      }
     }
   }
 
@@ -91,12 +125,24 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         }
     }
 
+  private fun setHighlightProductView(product: ModelProductListDomain) {
+    Glide.with(this).load(product.image)
+      .placeholder(requireActivity().getDrawable(R.drawable.default_image)).into(binding.imgProduct)
+    binding.apply {
+      txtProductName.text = product.name
+      txtProductPrice.text = product.productPrice.toString()
+      viewDiscount.tvDiscount.text = product.productDiscount.toString()
+      viewDiscount.tvDiscountLabel.text = product.productSpesialPrice.toString()
+    }
+  }
+
+
     @SuppressLint("UnsafeOptInUsageError")
     private fun initPlayer() {
         val exoplayer = ExoPlayer.Builder(requireContext()).build()
         binding.pvVideoView.player = exoplayer
         exoplayer.apply {
-            val mediaItem = buildMediaItem(TEST_DASH_URL)
+            val mediaItem = buildMediaItem(BASE_RTMP_URL + streamKey)
             setMediaSource(createDataSource(mediaItem))
 
             // Update the track selection parameters to only pick standard definition tracks
@@ -156,7 +202,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             .createMediaSource(mediaItem)
         val dashMediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory)
             .createMediaSource(mediaItem)
-        return dashMediaSource
+        return rtmpMediaSource
     }
 
     private fun Long.toSecond(): Long = this/ 1000000
@@ -174,8 +220,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         viewCountHandler.postDelayed(
             object : Runnable {
                 override fun run() {
-                    //viewModel.getLiveViewCount(streamKey)
-                    //getDataProduct()
+          viewModel.getLiveViewCount(streamKey)
+          getDataProduct()
                     viewCountHandler.postDelayed(this, 5000)
                 }
             }
