@@ -6,7 +6,8 @@
   <RelativeLayout
       android:id="@+id/rl_video_container"
       android:layout_width="match_parent"
-      android:layout_height="match_parent">
+      android:layout_height="match_parent"
+      android:background="@color/red">
     <include
         android:id="@+id/layout_live_view"
         layout="@layout/view_view_count"
@@ -17,9 +18,10 @@
         android:id="@+id/pv_video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:surface_type="texture_view"
+        app:surface_type="surface_view"
         app:use_controller="false"
         app:show_buffering="always"
+        app:shutter_background_color="@color/red"
         />
 
     <TextView

@@ -4,13 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -35,7 +32,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     private lateinit var productViewModel: ProductsViewModel
     private val BASE_RTMP_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
     private val TEST_DASH_URL = "https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"
-    private lateinit var listData:ArrayList<ModelProductListDomain>
+    private var listData:ArrayList<ModelProductListDomain> = arrayListOf()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,10 +48,10 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             this,
             ViewModelProvider.NewInstanceFactory()
         )[FragmentLiveViewModel::class.java]
-    productViewModel = ViewModelProvider(
-      this,
-      ViewModelProvider.NewInstanceFactory()
-    )[ProductsViewModel::class.java]
+        productViewModel = ViewModelProvider(
+          this,
+          ViewModelProvider.NewInstanceFactory()
+        )[ProductsViewModel::class.java]
 
         viewModel.postViewCount(streamKey, true)
 
@@ -69,8 +66,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   private fun getDataProduct() {
     productViewModel.getActiveProduct()
   }
-
-
 
   private fun setObserveProduct() {
     productViewModel.products.observe(viewLifecycleOwner) {
@@ -101,7 +96,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         val exoplayer = ExoPlayer.Builder(requireContext()).build()
         binding.pvVideoView.player = exoplayer
         exoplayer.apply {
-            val mediaItem = buildMediaItem(BASE_RTMP_URL + streamKey)
+            val mediaItem = buildMediaItem(TEST_DASH_URL)
             setMediaSource(createDataSource(mediaItem))
 
             // Update the track selection parameters to only pick standard definition tracks
@@ -116,14 +111,18 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
                 override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
                     super.onAvailableCommandsChanged(availableCommands)
-                    if(availableCommands.contains(Player.COMMAND_SEEK_TO_DEFAULT_POSITION))
-                        seekToDefaultPosition()
+                    if(availableCommands.contains(Player.COMMAND_SEEK_TO_NEXT))
+                        seekToNext()
+                }
+
+                override fun onEvents(player: Player, events: Player.Events) {
+                    super.onEvents(player, events)
                 }
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     when(playbackState) {
                         Player.STATE_READY -> {
-                            if (isCommandAvailable(Player.COMMAND_SEEK_TO_DEFAULT_POSITION))
-                                seekToDefaultPosition()
+                            if (isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT))
+                                seekToNext()
                             toastPrint("ready")
                         }
                         Player.STATE_BUFFERING -> {
@@ -157,7 +156,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             .createMediaSource(mediaItem)
         val dashMediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory)
             .createMediaSource(mediaItem)
-        return rtmpMediaSource
+        return dashMediaSource
     }
 
     private fun Long.toSecond(): Long = this/ 1000000
@@ -175,8 +174,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         viewCountHandler.postDelayed(
             object : Runnable {
                 override fun run() {
-          viewModel.getLiveViewCount(streamKey)
-          getDataProduct()
+                    //viewModel.getLiveViewCount(streamKey)
+                    //getDataProduct()
                     viewCountHandler.postDelayed(this, 5000)
                 }
             }
