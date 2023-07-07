@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card_radius_4"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/spacing_4"
+    >
+
+  <ImageView
+      android:id="@+id/iv_promo"
+      android:layout_width="@dimen/size_10"
+      android:layout_height="@dimen/size_10"
+      android:adjustViewBounds="true"
+      android:scaleType="fitCenter"
+      android:src="@drawable/ic_promo_rp_red"
+      tools:ignore="ContentDescription"
+      />
+
+  <!--style="@style/TextView.XTiny.Bold"-->
+  <TextView
+      android:id="@+id/tv_promo"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/spacing_4"
+      android:gravity="center_vertical"
+      android:includeFontPadding="false"
+      android:textColor="@color/primary_red_70"
+      app:drawableEndCompat="@drawable/ic_chevron_right_12"
+      app:drawableTint="@color/primary_red_70"
+      tools:text="Beli 2 hemat Rp 4.000"
+      />
+
+</LinearLayout>

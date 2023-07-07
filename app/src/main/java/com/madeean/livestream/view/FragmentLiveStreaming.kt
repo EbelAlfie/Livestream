@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -16,19 +18,25 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline.Window
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.rtmp.RtmpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.dash.DashMediaSource
+import androidx.media3.exoplayer.offline.DownloadHelper.createMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
+import com.madeean.livestream.domain.entity.LivestreamKeysData
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
+import com.madeean.livestream.viewmodel.LivestreamViewModel
 
 class FragmentLiveStreaming(private val port: Int, private val streamKey: String): Fragment() {
     private lateinit var binding : CustomPlayerUiBinding
     private val viewCountHandler = Handler(Looper.getMainLooper())
     private lateinit var viewModel: FragmentLiveViewModel
     private val BASE_URL: String = "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
-
+    private lateinit var listData:ArrayList<ModelProductList>
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,6 +58,46 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         setObserver()
         initPlayer()
         getViewCount()
+        setDataItem()
+        initView()
+        setOnClickBasket()
+    }
+
+    private fun initView() {
+        binding.btnBasketPopup.tvMiniBadge.text = listData.size.toString()
+    }
+
+    private fun setDataItem() {
+        val data1 = ModelProductList(
+            name = "Product 1",
+            price = "Rp. 100.000",
+            discountPrice = "Rp. 50.000",
+            discountRate = "50%"
+        )
+        val data2 = ModelProductList(
+            name = "Product 2",
+            price = "Rp. 100.000",
+            discountPrice = "Rp. 50.000",
+            discountRate = "50%"
+        )
+        val data3 = ModelProductList(
+            name = "Product 3",
+            price = "Rp. 100.000",
+            discountPrice = "Rp. 50.000",
+            discountRate = "50%"
+        )
+
+        listData = arrayListOf(data1,data2,data3)
+    }
+
+    private fun setOnClickBasket() {
+        binding.btnBasketPopup.containerImage.setOnClickListener {
+            ProductPopUpBottomSheetDialog.newInstance(listData)
+                .show(
+                    requireActivity().supportFragmentManager,
+                    ProductPopUpBottomSheetDialog::class.java.simpleName
+                )
+        }
     }
 
     private fun setObserver() {
@@ -72,7 +120,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             val datasource = RtmpDataSource.Factory() //transfer listener
             val mediaSource: MediaSource = ProgressiveMediaSource.Factory(datasource)
                 .createMediaSource(mediaItem)
-
             /**DASH*/
             /*val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
             // Create a dash media source pointing to a dash manifest uri.
@@ -82,11 +129,12 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             addListener(object: Player.Listener {
                 override fun onIsLoadingChanged(isLoading: Boolean) {
                     super.onIsLoadingChanged(isLoading)
-
+                    showProgressBar(binding.progressLoading, isLoading)
                 }
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     when(playbackState) {
                         Player.STATE_READY -> {
+                            showProgressBar(binding.progressLoading, false)
                             if (exoplayer.isCommandAvailable(
                                 Player.COMMAND_SEEK_TO_DEFAULT_POSITION)) {
                                 seekToDefaultPosition()
@@ -151,6 +199,10 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
     private fun showEndStream(binding: CustomPlayerUiBinding) {
         binding.tvStreamEnd.visibility = View.VISIBLE
+    }
+
+    private fun showProgressBar(progressBar: ProgressBar, isLoading: Boolean) {
+        progressBar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
     }
 
     private fun toastPrint(s: String) {

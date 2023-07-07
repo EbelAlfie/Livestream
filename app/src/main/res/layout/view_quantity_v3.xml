@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/lay_qty"
+    >
+
+  <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      >
+
+    <FrameLayout
+        android:id="@+id/wrapperDecreaseQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+      <ImageView
+          android:id="@+id/imgDecreaseQty"
+          android:layout_width="@dimen/image_32"
+          android:layout_height="@dimen/image_32"
+          android:layout_gravity="center"
+          android:background="@drawable/bg_box_v2"
+          android:scaleType="centerInside"
+          android:src="@drawable/ic_remove"
+          tools:ignore="ContentDescription"
+          />
+
+      <View
+          android:id="@+id/btnDecreaseQty"
+          android:layout_width="@dimen/image_32"
+          android:layout_height="@dimen/image_32"
+          android:background="?selectableItemBackgroundBorderless"
+          />
+
+    </FrameLayout>
+
+    <!--style="@style/EditText"-->
+    <EditText
+        android:id="@+id/txtQty"
+        android:background="@drawable/bg_line_v1"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/size_32"
+        android:layout_gravity="center"
+        android:imeOptions="actionDone"
+        android:includeFontPadding="false"
+        android:inputType="number"
+        android:maxLength="5"
+        android:minWidth="@dimen/size_32"
+        android:nextFocusLeft="@+id/txtQty"
+        android:nextFocusRight="@+id/txtQty"
+        android:nextFocusUp="@+id/txtQty"
+        android:nextFocusDown="@+id/txtQty"
+        android:nextFocusForward="@+id/txtQty"
+        android:paddingLeft="@dimen/spacing_normal"
+        android:paddingRight="@dimen/spacing_normal"
+        android:singleLine="true"
+        android:text="0"
+        android:textSize="@dimen/font_20"
+        android:layout_marginHorizontal="@dimen/spacing_small"
+        tools:ignore="Autofill,HardcodedText,LabelFor"
+        />
+
+    <FrameLayout
+        android:id="@+id/wrapperIncreaseQty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+      <ImageView
+          android:id="@+id/imgIncreaseQty"
+          android:layout_width="@dimen/image_32"
+          android:layout_height="@dimen/image_32"
+          android:layout_gravity="center"
+          android:background="@drawable/bg_box_v2"
+          android:scaleType="centerInside"
+          android:src="@drawable/ic_add"
+          tools:ignore="ContentDescription"
+          />
+
+      <View
+          android:id="@+id/btnIncreaseQty"
+          android:layout_width="@dimen/image_32"
+          android:layout_height="@dimen/image_32"
+          android:background="?selectableItemBackgroundBorderless"
+          />
+
+    </FrameLayout>
+  </LinearLayout>
+
+  <LinearLayout
+      android:id="@+id/containerQtyHint"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:layout_marginTop="@dimen/none"
+      android:layout_marginBottom="@dimen/spacing_3"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      tools:visibility="visible"
+      >
+
+    <!--style="@style/TextView.Tiny"-->
+    <TextView
+        android:id="@+id/txtHint"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:paddingStart="@dimen/none"
+        android:paddingEnd="@dimen/spacing_tiny"
+        android:textColor="@color/red3"
+        tools:text="Qty Rutin Anda: 123"
+        />
+
+  </LinearLayout>
+
+</LinearLayout>
