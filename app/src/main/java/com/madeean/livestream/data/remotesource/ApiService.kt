@@ -3,6 +3,7 @@ package com.madeean.livestream.data.remotesource
 import com.madeean.livestream.data.model.LivestreamDataModel
 import com.madeean.livestream.data.model.LivestreamStatisticModel
 import com.madeean.livestream.data.model.LivestreamViewCountModel
+import com.madeean.livestream.data.model.ProductsDataModel
 import retrofit2.http.*
 
 interface ApiService {
@@ -17,4 +18,7 @@ interface ApiService {
     suspend fun postViewCount(
         @Body liveStat: LivestreamStatisticModel
     )
+
+    @GET("product/active")
+    suspend fun getActiveProduct():ArrayList<ProductsDataModel>
 }
