@@ -29,7 +29,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        app:resize_mode="fill"
+        app:resize_mode="fixed_width"
         app:show_buffering="always"
         app:shutter_background_color="@color/blue"
         app:surface_type="surface_view"
@@ -58,12 +58,14 @@
       >
 
     <androidx.constraintlayout.widget.ConstraintLayout
+
         android:id="@+id/highlight_product"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:background="@color/white"
-        android:visibility="gone"
+        android:background="@drawable/bg_highlight_product"
+        android:visibility="visible"
+        android:padding="10dp"
         app:layout_constraintBottom_toTopOf="@id/btn_basket_popup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +75,6 @@
           android:id="@+id/img_product"
           android:layout_width="@dimen/image_85"
           android:layout_height="0dp"
-          android:layout_marginVertical="@dimen/spacing_normal"
           android:scaleType="fitStart"
           app:layout_constraintBottom_toBottomOf="@id/wrapper_product"
           app:layout_constraintStart_toStartOf="parent"
@@ -83,11 +84,11 @@
           />
 
       <LinearLayout
+          android:layout_marginStart="10dp"
           android:id="@+id/wrapper_product"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:padding="@dimen/spacing_normal"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toEndOf="@+id/img_product"
           app:layout_constraintTop_toTopOf="parent"
@@ -99,7 +100,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:maxLines="2"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/img_product"
             app:layout_constraintTop_toTopOf="parent"
@@ -117,11 +120,13 @@
 
           <!--style="@style/TextView.Bold"-->
           <TextView
+              android:textColor="@color/red5"
               android:id="@+id/txt_product_price"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginEnd="@dimen/spacing_small"
               android:ellipsize="end"
+              android:textSize="20sp"
               android:maxLines="1"
               app:layout_alignSelf="center"
               tools:text="Rp. 10.000.000.00"
@@ -153,6 +158,8 @@
               android:id="@+id/btn_add_to_cart"
               android:layout_width="wrap_content"
               android:layout_height="@dimen/small_button_height"
+              android:background="@drawable/bg_button_keranjang"
+              android:textColor="@color/white"
               android:layout_gravity="end"
               android:paddingHorizontal="@dimen/spacing_normal"
               android:paddingVertical="@dimen/size_5"

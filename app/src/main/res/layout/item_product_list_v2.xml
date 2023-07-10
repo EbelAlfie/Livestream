@@ -12,10 +12,12 @@
     >
 
   <androidx.constraintlayout.widget.ConstraintLayout
-      android:id="@+id/cl_item_product"
+      android:id="@+id/highlight_product"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:layout_constraintBottom_toBottomOf="parent"
+      android:background="@drawable/bg_highlight_product"
+      android:padding="10dp"
+      android:visibility="visible"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
@@ -26,20 +28,19 @@
         android:layout_width="@dimen/image_85"
         android:layout_height="0dp"
         android:scaleType="fitStart"
-        android:layout_marginVertical="@dimen/spacing_normal"
+        app:layout_constraintBottom_toBottomOf="@id/wrapper_product"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/wrapper_product"
         tools:ignore="ContentDescription"
         tools:src="@drawable/default_image"
-        app:layout_constraintBottom_toBottomOf="@id/wrapper_product"
-        app:layout_constraintTop_toTopOf="@id/wrapper_product"
-        app:layout_constraintStart_toStartOf="parent"
         />
 
     <LinearLayout
+        android:layout_marginStart="10dp"
         android:id="@+id/wrapper_product"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/spacing_normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/img_product"
         app:layout_constraintTop_toTopOf="parent"
@@ -51,19 +52,23 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:ellipsize="end"
-          android:maxLines="2"
+          android:maxLines="1"
+          android:textColor="@color/black"
+          android:textSize="18sp"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toEndOf="@+id/img_product"
           app:layout_constraintTop_toTopOf="parent"
           tools:text="Oishi Sponge Crunch Mochaccino 120g "
           />
+
       <com.google.android.flexbox.FlexboxLayout
           android:id="@+id/wrapper_price"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           app:alignContent="flex_start"
           app:alignItems="flex_start"
-          app:flexWrap="wrap">
+          app:flexWrap="wrap"
+          >
 
         <!--style="@style/TextView.Bold"-->
         <TextView
@@ -73,6 +78,8 @@
             android:layout_marginEnd="@dimen/spacing_small"
             android:ellipsize="end"
             android:maxLines="1"
+            android:textColor="@color/red5"
+            android:textSize="20sp"
             app:layout_alignSelf="center"
             tools:text="Rp. 10.000.000.00"
             />
@@ -104,9 +111,11 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/small_button_height"
             android:layout_gravity="end"
+            android:background="@drawable/bg_button_keranjang"
             android:paddingHorizontal="@dimen/spacing_normal"
             android:paddingVertical="@dimen/size_5"
             android:text="+ Keranjang"
+            android:textColor="@color/white"
             />
 
         <include

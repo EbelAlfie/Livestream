@@ -46,7 +46,7 @@ class AdapterProductList : RecyclerView.Adapter<AdapterProductList.AdapterProduc
         swapData(dataHighlight!!, dataHighlightPosition, listData[0], position)
         if (position == 0) {
 
-          holder.binding.clItemProduct.setBackgroundColor(context.getColor(R.color.grey))
+          holder.binding.highlightProduct.setBackgroundResource(R.drawable.bg_atas_product)
         }
       }
     }
