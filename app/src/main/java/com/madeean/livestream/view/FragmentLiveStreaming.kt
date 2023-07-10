@@ -41,7 +41,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
   private val TEST_HSL_URL =
     "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/hls/"
-  private val TV_GAJE_URL = "https://iptv-org.github.io/iptv/countries/id.m3u"
+  private val TV_GAJE_URL =
+    "https://nhkwlive-ojp.akamaized.net/hls/live/2003459/nhkwlive-ojp-en/index.m3u8"
   private val YTB_URL =
     "https://www.youtube.com/embed/uDhe7bxOBrI"
   private var listData: ArrayList<ModelProductListDomain> = arrayListOf()
@@ -148,8 +149,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
       val mediaItem = buildMediaItem(TV_GAJE_URL/*"$TEST_HSL_URL$streamKey.m3u8"*/)
-      setMediaSource(createDataSource(mediaItem))
-
+      //setMediaSource(createDataSource(mediaItem))
+      setMediaItem(mediaItem)
       val bandwidthMeter = BandwidthMeter.EventListener { elapsedMs, bytesTransferred, bitrateEstimate ->
 
       }
@@ -163,12 +164,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           super.onIsLoadingChanged(isLoading)
         }
 
-        override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
-          super.onAvailableCommandsChanged(availableCommands)
-          if (availableCommands.contains(Player.COMMAND_SEEK_TO_NEXT))
-            seekToNext()
-        }
-
         override fun onEvents(player: Player, events: Player.Events) {
           super.onEvents(player, events)
         }
@@ -177,8 +172,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           when (playbackState) {
             Player.STATE_READY -> {
               toastPrint("ready")
-              if (isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT))
-                seekToNext()
+              if (isCommandAvailable(Player.COMMAND_SEEK_TO_DEFAULT_POSITION))
+                seekToDefaultPosition()
             }
             Player.STATE_BUFFERING -> {
               toastPrint("buffer")
@@ -229,7 +224,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
       .setLiveConfiguration(
         MediaItem.LiveConfiguration.Builder().setMaxPlaybackSpeed(1.02f).build()
       )
-      .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA)
+      .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA).setMimeType(MimeTypes.APPLICATION_M3U8)
       .build()
   }
 
