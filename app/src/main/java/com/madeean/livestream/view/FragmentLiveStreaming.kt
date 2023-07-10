@@ -223,6 +223,10 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
           toastPrint(error.toString())
+          when(error.errorCode) {
+            PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW ->
+              seekToDefaultPosition()
+          }
           prepare()
         }
       })
