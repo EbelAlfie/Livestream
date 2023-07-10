@@ -39,21 +39,17 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   private val viewCountHandler = Handler(Looper.getMainLooper())
   private lateinit var viewModel: FragmentLiveViewModel
   private lateinit var productViewModel: ProductsViewModel
-  private val BASE_RTMP_URL: String =
+  private val BASE_RTMP_URL =
     "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
-  private val TEST_HSL_URL =
+  private val BASE_HLS_URL =
     "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/hls/"
   private val TV_GAJE_URL =
     "https://op-group1-swiftservehd-1.dens.tv/h/h114/S4/mnf.m3u8?app_type=web&userid=jjj&chname=ANIPLUS_HD"
-    //"https://op-group1-swiftservehd-1.dens.tv/h/h114/S4/mnf.m3u8"
-    //"https://gdplayer.tv/hls/?tv=aniplus&bypass=0&token=MXc4bTQrZlBnd3JWWFlCQ0lVL0ZsbHlmc3oxc1F0aFNLU3F1T2Z6MUdOTT06Or15VGCgdA4NHWPsqIRvt%2BA%3D"
     //"https://stmv1.srvif.com/animetv/animetv/playlist.m3u8"
     //"https://nhkwlive-ojp.akamaized.net/hls/live/2003459/nhkwlive-ojp-en/index.m3u8"
-  private val YTB_URL =
-    "https://www.youtube.com/embed/uDhe7bxOBrI"
   private var listData: ArrayList<ModelProductListDomain> = arrayListOf()
-
   private lateinit var productHighlight: ModelProductListDomain
+
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
@@ -114,7 +110,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   private fun getDataProduct() {
     productViewModel.getActiveProduct()
   }
-
 
   private fun setObserveProduct() {
     productViewModel.products.observe(viewLifecycleOwner) {
@@ -182,12 +177,12 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
       val mediaItem = buildMediaItem(TV_GAJE_URL/*"$TEST_HSL_URL$streamKey.m3u8"*/)
-      //setMediaSource(createDataSource(mediaItem))
-      setMediaItem(mediaItem)
+      setMediaSource(createDataSource(mediaItem))
+
       val bandwidthMeter = BandwidthMeter.EventListener { elapsedMs, bytesTransferred, bitrateEstimate ->
 
       }
-      // Update the track selection parameters to only pick standard definition tracks
+
       trackSelectionParameters = trackSelectionParameters.buildUpon()
         .setMaxVideoSizeSd()
         .build()
@@ -253,8 +248,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     return hlsMediaSource
   }
 
-  private fun Long.toSecond(): Long = this / 1000000
-
   private fun buildMediaItem(url: String): MediaItem {
     return MediaItem.Builder().setUri(url)
       .setLiveConfiguration(
@@ -297,4 +290,5 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     super.onPause()
     viewModel.postViewCount(streamKey, false)
   }
+  private fun Long.toSecond(): Long = this / 1000000
 }
