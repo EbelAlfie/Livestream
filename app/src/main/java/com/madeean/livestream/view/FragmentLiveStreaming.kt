@@ -21,8 +21,10 @@ import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.rtmp.RtmpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.dash.DashMediaSource
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.upstream.BandwidthMeter
 import com.bumptech.glide.Glide
 import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
@@ -37,8 +39,10 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   private lateinit var productViewModel: ProductsViewModel
   private val BASE_RTMP_URL: String =
     "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
-  private val TEST_DASH_URL =
-    "https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"
+  private val TEST_HSL_URL =
+    "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/hls/"
+  private val YTB_URL =
+    "https://www.youtube.com/embed/uDhe7bxOBrI"
   private var listData: ArrayList<ModelProductListDomain> = arrayListOf()
 
   private lateinit var productHighlight: ModelProductListDomain
@@ -142,9 +146,12 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     val exoplayer = ExoPlayer.Builder(requireContext()).build()
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
-      val mediaItem = buildMediaItem(BASE_RTMP_URL + streamKey)
+      val mediaItem = buildMediaItem(/*YTB_URL*/"$TEST_HSL_URL$streamKey.m3u8")
       setMediaSource(createDataSource(mediaItem))
 
+      val bandwidthMeter = BandwidthMeter.EventListener { elapsedMs, bytesTransferred, bitrateEstimate ->
+
+      }
       // Update the track selection parameters to only pick standard definition tracks
       trackSelectionParameters = trackSelectionParameters.buildUpon()
         .setMaxVideoSizeSd()
@@ -168,9 +175,9 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         override fun onPlaybackStateChanged(playbackState: Int) {
           when (playbackState) {
             Player.STATE_READY -> {
+              toastPrint("ready")
               if (isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT))
                 seekToNext()
-              toastPrint("ready")
             }
             Player.STATE_BUFFERING -> {
               toastPrint("buffer")
@@ -207,7 +214,11 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
       .createMediaSource(mediaItem)
     val dashMediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory)
       .createMediaSource(mediaItem)
-    return rtmpMediaSource
+    val youtubeMediaSource = ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory)
+      .createMediaSource(mediaItem)
+    val hlsMediaSource = HlsMediaSource.Factory(defaultHttpDataSourceFactory)
+      .createMediaSource(mediaItem)
+    return hlsMediaSource
   }
 
   private fun Long.toSecond(): Long = this / 1000000
@@ -227,9 +238,9 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         override fun run() {
           viewModel.getLiveViewCount(streamKey)
           getDataProduct()
-          viewCountHandler.postDelayed(this, 500)
+          viewCountHandler.postDelayed(this, 5000)
         }
-      }, 500)
+      }, 5000)
   }
 
   private fun showEndStream(binding: CustomPlayerUiBinding) {
