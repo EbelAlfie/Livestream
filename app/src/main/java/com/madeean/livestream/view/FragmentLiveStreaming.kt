@@ -4,13 +4,10 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -31,6 +28,11 @@ import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
+import java.security.KeyManagementException
+import java.security.NoSuchAlgorithmException
+import java.security.SecureRandom
+import java.security.cert.X509Certificate
+import javax.net.ssl.*
 
 class FragmentLiveStreaming(private val port: Int, private val streamKey: String) : Fragment() {
   private lateinit var binding: CustomPlayerUiBinding
@@ -42,7 +44,11 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   private val TEST_HSL_URL =
     "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/hls/"
   private val TV_GAJE_URL =
-    "https://nhkwlive-ojp.akamaized.net/hls/live/2003459/nhkwlive-ojp-en/index.m3u8"
+    "https://op-group1-swiftservehd-1.dens.tv/h/h114/S4/mnf.m3u8?app_type=web&userid=jjj&chname=ANIPLUS_HD"
+    //"https://op-group1-swiftservehd-1.dens.tv/h/h114/S4/mnf.m3u8"
+    //"https://gdplayer.tv/hls/?tv=aniplus&bypass=0&token=MXc4bTQrZlBnd3JWWFlCQ0lVL0ZsbHlmc3oxc1F0aFNLU3F1T2Z6MUdOTT06Or15VGCgdA4NHWPsqIRvt%2BA%3D"
+    //"https://stmv1.srvif.com/animetv/animetv/playlist.m3u8"
+    //"https://nhkwlive-ojp.akamaized.net/hls/live/2003459/nhkwlive-ojp-en/index.m3u8"
   private val YTB_URL =
     "https://www.youtube.com/embed/uDhe7bxOBrI"
   private var listData: ArrayList<ModelProductListDomain> = arrayListOf()
@@ -69,6 +75,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
       ViewModelProvider.NewInstanceFactory()
     )[ProductsViewModel::class.java]
 
+    disableSSLCertificateVerify() //buat streaming aniplay :)
 
     setObserver()
     initPlayer()
@@ -76,6 +83,32 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     setObserveProduct()
     getDataProduct()
     setOnClickBasket()
+  }
+
+  private fun disableSSLCertificateVerify() {
+    val trustAllCerts: Array<TrustManager> = arrayOf<TrustManager>(
+      object : X509TrustManager {
+        override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
+        override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
+        override fun getAcceptedIssuers(): Array<X509Certificate> {
+          return arrayOf()
+        }
+      }
+    )
+    try {
+      val sc: SSLContext = SSLContext.getInstance("SSL")
+      sc.init(null, trustAllCerts, SecureRandom())
+      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
+      HttpsURLConnection.setDefaultHostnameVerifier(object : HostnameVerifier {
+        override fun verify(hostname: String?, session: SSLSession?): Boolean {
+          return true
+        }
+      })
+    } catch (e: KeyManagementException) {
+      e.printStackTrace()
+    } catch (e: NoSuchAlgorithmException) {
+      e.printStackTrace()
+    }
   }
 
   private fun getDataProduct() {
