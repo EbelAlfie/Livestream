@@ -41,6 +41,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
   private val TEST_HSL_URL =
     "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/hls/"
+  private val TV_GAJE_URL = "https://iptv-org.github.io/iptv/countries/id.m3u"
   private val YTB_URL =
     "https://www.youtube.com/embed/uDhe7bxOBrI"
   private var listData: ArrayList<ModelProductListDomain> = arrayListOf()
@@ -146,7 +147,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     val exoplayer = ExoPlayer.Builder(requireContext()).build()
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
-      val mediaItem = buildMediaItem(/*YTB_URL*/"$TEST_HSL_URL$streamKey.m3u8")
+      val mediaItem = buildMediaItem(TV_GAJE_URL/*"$TEST_HSL_URL$streamKey.m3u8"*/)
       setMediaSource(createDataSource(mediaItem))
 
       val bandwidthMeter = BandwidthMeter.EventListener { elapsedMs, bytesTransferred, bitrateEstimate ->
