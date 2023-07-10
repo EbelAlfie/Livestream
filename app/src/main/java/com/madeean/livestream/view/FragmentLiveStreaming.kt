@@ -172,8 +172,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           when (playbackState) {
             Player.STATE_READY -> {
               toastPrint("ready")
-              if (isCommandAvailable(Player.COMMAND_SEEK_TO_DEFAULT_POSITION))
-                seekToDefaultPosition()
             }
             Player.STATE_BUFFERING -> {
               toastPrint("buffer")
@@ -196,6 +194,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         }
       })
 
+      seekToDefaultPosition()
       prepare()
       playWhenReady = true
     }
