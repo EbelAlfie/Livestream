@@ -176,7 +176,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     val exoplayer = ExoPlayer.Builder(requireContext()).build()
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
-      val mediaItem = buildMediaItem(TV_GAJE_URL/*"$TEST_HSL_URL$streamKey.m3u8"*/)
+      val mediaItem = buildMediaItem("$BASE_HLS_URL$streamKey.m3u8")
       setMediaSource(createDataSource(mediaItem))
 
       val bandwidthMeter = BandwidthMeter.EventListener { elapsedMs, bytesTransferred, bitrateEstimate ->
@@ -199,17 +199,17 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         override fun onPlaybackStateChanged(playbackState: Int) {
           when (playbackState) {
             Player.STATE_READY -> {
-              toastPrint("ready")
+              //toastPrint("ready")
             }
             Player.STATE_BUFFERING -> {
-              toastPrint("buffer")
+              //toastPrint("buffer")
             }
             Player.STATE_ENDED -> {
-              toastPrint("end")
+              //toastPrint("end")
               showEndStream(binding)
             }
             Player.STATE_IDLE -> {
-              toastPrint("idle")
+              //toastPrint("idle")
               prepare()
             }
           }
@@ -217,7 +217,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
-          toastPrint(error.toString())
+          toastPrint(error.errorCodeName)
           when(error.errorCode) {
             PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW ->
               seekToDefaultPosition()
@@ -241,8 +241,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
       .createMediaSource(mediaItem)
     val dashMediaSource = DashMediaSource.Factory(defaultHttpDataSourceFactory)
       .createMediaSource(mediaItem)
-    val youtubeMediaSource = ProgressiveMediaSource.Factory(defaultHttpDataSourceFactory)
-      .createMediaSource(mediaItem)
     val hlsMediaSource = HlsMediaSource.Factory(defaultHttpDataSourceFactory)
       .createMediaSource(mediaItem)
     return hlsMediaSource
@@ -251,8 +249,10 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   private fun buildMediaItem(url: String): MediaItem {
     return MediaItem.Builder().setUri(url)
       .setLiveConfiguration(
-        MediaItem.LiveConfiguration.Builder().setMaxPlaybackSpeed(1.02f).build()
-      )
+        MediaItem.LiveConfiguration.Builder()
+          .setMaxPlaybackSpeed(1.02f)
+          .setMaxOffsetMs(1000).build()
+      ) //TODO set offsetnya biar ga terlalu delay
       .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA).setMimeType(MimeTypes.APPLICATION_M3U8)
       .build()
   }
