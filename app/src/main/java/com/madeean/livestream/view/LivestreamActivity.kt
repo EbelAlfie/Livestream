@@ -43,6 +43,9 @@ class LivestreamActivity : AppCompatActivity() {
       ViewModelProvider.NewInstanceFactory()
     )[LivestreamViewModel::class.java]
 
+    /*setPictureInPictureParams(PictureInPictureParams.Builder()
+      .setAutoEnterEnabled(true)
+      .build())*/
 
     setViewPager()
     setObserver()

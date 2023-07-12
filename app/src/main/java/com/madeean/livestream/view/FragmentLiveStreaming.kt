@@ -207,10 +207,10 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
-          toastPrint(error.errorCodeName)
           when(error.errorCode) {
             PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW ->
               seekToDefaultPosition()
+            else -> toastPrint(error.errorCodeName)
           }
           prepare()
         }
@@ -221,6 +221,13 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
       playWhenReady = true
     }
   }
+
+  override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+    super.onPictureInPictureModeChanged(isInPictureInPictureMode)
+    binding.apply {
+      productContainer.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
+      layoutLiveView.tvViews.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
+    }}
 
   @SuppressLint("UnsafeOptInUsageError")
   private fun createDataSource(mediaItem: MediaItem): MediaSource {
