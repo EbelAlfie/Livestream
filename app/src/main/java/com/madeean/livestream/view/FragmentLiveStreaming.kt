@@ -133,12 +133,12 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             isActive = product.isActive
           )
           setHighlightProductView(product)
-          binding.highlightProduct.visibility = View.VISIBLE
+          binding.viewProductPopup.highlightProduct.visibility = View.VISIBLE
         }
       }
 
       if (position <= 0) {
-        binding.highlightProduct.visibility = View.GONE
+        binding.viewProductPopup.highlightProduct.visibility = View.GONE
       }
     }
   }
@@ -160,9 +160,9 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   }
 
   private fun setHighlightProductView(product: ModelProductListDomain) {
-    Glide.with(this).load(product.image)
-      .placeholder(requireActivity().getDrawable(R.drawable.default_image)).into(binding.imgProduct)
-    binding.apply {
+    binding.viewProductPopup.apply {
+      Glide.with(this@FragmentLiveStreaming).load(product.image)
+        .placeholder(requireActivity().getDrawable(R.drawable.default_image)).into(imgProduct)
       txtProductName.text = product.name
       txtProductPrice.text = product.productPrice.toString()
       viewDiscount.tvDiscount.text = product.productDiscount.toString()
@@ -194,12 +194,12 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
         override fun onPlaybackStateChanged(playbackState: Int) {
           when (playbackState) {
-            Player.STATE_READY -> toastPrint("ready")
-            Player.STATE_BUFFERING -> toastPrint("buffer")
-            Player.STATE_ENDED -> { toastPrint("end")
+            Player.STATE_READY -> {}//toastPrint("ready")
+            Player.STATE_BUFFERING -> {}//toastPrint("buffer")
+            Player.STATE_ENDED -> { //toastPrint("end")
               showEndStream(binding)
             }
-            Player.STATE_IDLE -> { toastPrint("idle")
+            Player.STATE_IDLE -> { //toastPrint("idle")
               prepare()
             }
           }

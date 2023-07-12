@@ -17,6 +17,7 @@
         android:name=".view.LivestreamActivity"
         android:supportsPictureInPicture="true"
         android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
+        android:launchMode="singleTask"
         android:exported="false">
     </activity>
 
