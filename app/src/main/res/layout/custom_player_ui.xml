@@ -9,8 +9,16 @@
       android:id="@+id/rl_video_container"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="@color/red"
+      android:background="@color/black"
       >
+
+    <include
+        android:id="@+id/view_host"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/view_host_name"
+        android:layout_toStartOf="parent"
+        android:layout_alignParentTop="true"/>
 
     <include
         android:id="@+id/layout_live_view"
@@ -30,7 +38,7 @@
         android:layout_alignParentBottom="true"
         app:resize_mode="fixed_width"
         app:show_buffering="always"
-        app:shutter_background_color="@color/blue"
+        app:shutter_background_color="@color/black"
         app:surface_type="surface_view"
         app:use_controller="false"
         />
@@ -54,8 +62,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
-      android:layout_margin="@dimen/size_8"
-      >
+      android:layout_margin="@dimen/size_8">
 
     <include
       android:id="@+id/view_product_popup"
@@ -66,8 +73,22 @@
         layout="@layout/view_basket_icon_livestream"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_comment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="Beri komentar..."
+        android:textColor="@color/white"
+        android:gravity="center|start"
+        android:background="@drawable/view_count_border"
+        android:padding="@dimen/showcase_padding_8dp"
+        android:layout_marginVertical="@dimen/showcase_margin_12dp"
+        app:layout_constraintStart_toEndOf="@id/btn_basket_popup"
+        app:layout_constraintTop_toTopOf="@id/btn_basket_popup"
+        app:layout_constraintBottom_toBottomOf="@id/btn_basket_popup"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 
