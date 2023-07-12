@@ -30,7 +30,6 @@ class LivestreamActivity : AppCompatActivity() {
     }
   }
 
-  @RequiresApi(Build.VERSION_CODES.S)
   override fun onCreate(savedInstanceState: Bundle?) {
     binding = ActivityMainBinding.inflate(layoutInflater)
     super.onCreate(savedInstanceState)
@@ -42,10 +41,6 @@ class LivestreamActivity : AppCompatActivity() {
       this,
       ViewModelProvider.NewInstanceFactory()
     )[LivestreamViewModel::class.java]
-
-    /*setPictureInPictureParams(PictureInPictureParams.Builder()
-      .setAutoEnterEnabled(true)
-      .build())*/
 
     setViewPager()
     setObserver()
@@ -71,8 +66,8 @@ class LivestreamActivity : AppCompatActivity() {
     binding.vpLiveStream.adapter = adapter
   }
 
-  override fun onUserLeaveHint() {
-    super.onUserLeaveHint()
+  @RequiresApi(Build.VERSION_CODES.S)
+  override fun onBackPressed() {
     enterPictureInPictureMode()
   }
 

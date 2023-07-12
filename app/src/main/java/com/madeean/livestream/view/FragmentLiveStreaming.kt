@@ -227,7 +227,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     binding.apply {
       productContainer.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
       layoutLiveView.tvViews.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
-    }}
+    }
+  }
 
   @SuppressLint("UnsafeOptInUsageError")
   private fun createDataSource(mediaItem: MediaItem): MediaSource {
