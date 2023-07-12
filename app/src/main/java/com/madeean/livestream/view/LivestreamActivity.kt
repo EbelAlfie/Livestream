@@ -1,10 +1,14 @@
 package com.madeean.livestream.view
 
+import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.ViewModelProvider
 import com.madeean.livestream.databinding.ActivityMainBinding
 import com.madeean.livestream.viewmodel.LivestreamViewModel
@@ -26,6 +30,7 @@ class LivestreamActivity : AppCompatActivity() {
     }
   }
 
+  @RequiresApi(Build.VERSION_CODES.S)
   override fun onCreate(savedInstanceState: Bundle?) {
     binding = ActivityMainBinding.inflate(layoutInflater)
     super.onCreate(savedInstanceState)
@@ -37,6 +42,7 @@ class LivestreamActivity : AppCompatActivity() {
       this,
       ViewModelProvider.NewInstanceFactory()
     )[LivestreamViewModel::class.java]
+
 
     setViewPager()
     setObserver()
@@ -60,6 +66,11 @@ class LivestreamActivity : AppCompatActivity() {
   private fun setViewPager() {
     adapter = FragmentAdapter(supportFragmentManager, lifecycle)
     binding.vpLiveStream.adapter = adapter
-    //adapter.addFragment(FragmentLiveStreaming(port,"cacingtanah"))
   }
+
+  override fun onUserLeaveHint() {
+    super.onUserLeaveHint()
+    enterPictureInPictureMode()
+  }
+
 }

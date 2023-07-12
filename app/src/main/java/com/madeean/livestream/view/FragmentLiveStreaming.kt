@@ -176,12 +176,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     val exoplayer = ExoPlayer.Builder(requireContext()).build()
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
-      val mediaItem = buildMediaItem("$BASE_HLS_URL$streamKey.m3u8")
+      val mediaItem = buildMediaItem(TV_GAJE_URL/*"$BASE_HLS_URL$streamKey.m3u8"*/)
       setMediaSource(createDataSource(mediaItem))
-
-      val bandwidthMeter = BandwidthMeter.EventListener { elapsedMs, bytesTransferred, bitrateEstimate ->
-
-      }
 
       trackSelectionParameters = trackSelectionParameters.buildUpon()
         .setMaxVideoSizeSd()
@@ -198,18 +194,12 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
         override fun onPlaybackStateChanged(playbackState: Int) {
           when (playbackState) {
-            Player.STATE_READY -> {
-              //toastPrint("ready")
-            }
-            Player.STATE_BUFFERING -> {
-              //toastPrint("buffer")
-            }
-            Player.STATE_ENDED -> {
-              //toastPrint("end")
+            Player.STATE_READY -> toastPrint("ready")
+            Player.STATE_BUFFERING -> toastPrint("buffer")
+            Player.STATE_ENDED -> { toastPrint("end")
               showEndStream(binding)
             }
-            Player.STATE_IDLE -> {
-              //toastPrint("idle")
+            Player.STATE_IDLE -> { toastPrint("idle")
               prepare()
             }
           }
