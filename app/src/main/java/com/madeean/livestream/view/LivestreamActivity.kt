@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import android.window.OnBackInvokedDispatcher
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ReportFragment.Companion.reportFragment
@@ -66,8 +67,8 @@ class LivestreamActivity : AppCompatActivity() {
     binding.vpLiveStream.adapter = adapter
   }
 
-  @RequiresApi(Build.VERSION_CODES.S)
   override fun onBackPressed() {
+    super.onBackPressed()
     enterPictureInPictureMode()
   }
 

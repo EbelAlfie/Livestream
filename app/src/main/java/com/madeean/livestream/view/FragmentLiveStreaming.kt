@@ -1,13 +1,18 @@
 package com.madeean.livestream.view
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsetsAnimation
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.MediaItem
@@ -73,12 +78,27 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
     disableSSLCertificateVerify() //buat streaming aniplay :)
 
+    initViewInteractions()
     setObserver()
     initPlayer()
     getViewCount()
     setObserveProduct()
     getDataProduct()
     setOnClickBasket()
+  }
+
+  private fun initViewInteractions() {
+    binding.apply {
+      ivClose.setOnClickListener {
+        (requireActivity() as LivestreamActivity).onBackPressedDispatcher.onBackPressed()
+      }
+      tvComment.setOnClickListener {showKeyboard()}
+    }
+  }
+
+  private fun showKeyboard() {
+    (requireActivity() as LivestreamActivity).getSystemService(InputMethodManager::class.java)
+      .showSoftInput(binding.root, InputMethodManager.RESULT_SHOWN)
   }
 
   private fun disableSSLCertificateVerify() {
@@ -184,27 +204,14 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         .build()
 
       addListener(object : Player.Listener {
-        override fun onIsLoadingChanged(isLoading: Boolean) {
-          super.onIsLoadingChanged(isLoading)
-        }
-
-        override fun onEvents(player: Player, events: Player.Events) {
-          super.onEvents(player, events)
-        }
-
         override fun onPlaybackStateChanged(playbackState: Int) {
           when (playbackState) {
-            Player.STATE_READY -> {}//toastPrint("ready")
-            Player.STATE_BUFFERING -> {}//toastPrint("buffer")
-            Player.STATE_ENDED -> { //toastPrint("end")
-              showEndStream(binding)
-            }
-            Player.STATE_IDLE -> { //toastPrint("idle")
-              prepare()
-            }
+            Player.STATE_READY -> {}
+            Player.STATE_BUFFERING -> {}
+            Player.STATE_ENDED -> { showEndStream(binding) }
+            Player.STATE_IDLE -> { prepare() }
           }
         }
-
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
           when(error.errorCode) {

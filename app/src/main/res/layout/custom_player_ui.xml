@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_video_container"
+    android:background="@color/black"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
-  <RelativeLayout
-      android:id="@+id/rl_video_container"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:background="@color/black"
-      >
-
     <include
         android:id="@+id/view_host"
         android:layout_width="wrap_content"
@@ -24,8 +18,16 @@
         layout="@layout/view_view_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_toStartOf="@id/iv_close"
         />
+
+    <ImageView
+        android:id="@+id/iv_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_close_24"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"/>
 
     <androidx.media3.ui.PlayerView
         android:id="@+id/pv_video_view"
@@ -58,14 +60,19 @@
         android:textColor="@color/white"
         android:visibility="gone"
         />
-  </RelativeLayout>
-
   <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/product_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
       android:layout_margin="@dimen/size_8">
+
+      <androidx.recyclerview.widget.RecyclerView
+          android:id="@+id/rv_chats"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/dp_72"
+          android:backgroundTint="@color/transparent"
+          app:layout_constraintBottom_toTopOf="@id/view_product_popup"/>
 
     <include
         android:id="@+id/view_product_popup"

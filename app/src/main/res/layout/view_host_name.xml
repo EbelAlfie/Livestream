@@ -3,11 +3,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/showcase_padding_8dp"
     android:background="@drawable/view_count_border">
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/siv_profile_pict"
-        android:layout_width="@dimen/image_22"
-        android:layout_height="@dimen/image_20"
+        android:layout_width="@dimen/image_40"
+        android:layout_height="@dimen/image_40"
         android:src="@drawable/baseline_person_24"
         android:backgroundTint="@color/grey19"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,19 +21,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Aniplus.tv"
-        android:textSize="@dimen/spacing_4"
+        android:textSize="@dimen/sp_16"
         android:maxLines="1"
         android:ellipsize="marquee"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@id/siv_profile_pict"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btn_follow"/>
     <TextView
         android:id="@+id/tv_pengikut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="100 umat"
-        android:textSize="@dimen/spacing_4"
-        android:textColor="@color/black"
+        android:textSize="@dimen/sp_16"
+        android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@id/siv_profile_pict"
-        app:layout_constraintTop_toBottomOf="@id/tv_username"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_username"
+        app:layout_constraintEnd_toStartOf="@id/btn_follow"/>
+    <Button
+        android:id="@+id/btn_follow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Follow +"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_design_follow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
