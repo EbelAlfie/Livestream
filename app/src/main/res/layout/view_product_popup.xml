@@ -5,7 +5,7 @@
     android:id="@+id/highlight_product"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
+    android:layout_marginBottom="30dp"
     android:background="@drawable/bg_highlight_product"
     android:visibility="visible"
     android:padding="10dp"
