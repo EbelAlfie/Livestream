@@ -7,7 +7,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,13 +22,11 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bumptech.glide.Glide
 import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.view.Utils.BASE_HLS_URL
-import com.madeean.livestream.view.Utils.viewDisplayMode
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
 import java.security.KeyManagementException
@@ -129,17 +126,27 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
       tvComment.setOnClickListener {
         showCommentDialog()
       }
-      clShare.setOnClickListener {
+      viewIconShareLike.clShare.setOnClickListener {
         showPopupShare()
       }
       setOnClickBasket()
     }
   }
 
-  private fun showPopupShare() {}
+  private fun showPopupShare() {
+    val sendIntent: Intent = Intent().apply {
+      action = Intent.ACTION_SEND
+      putExtra(Intent.EXTRA_TEXT, "Alfagift Livestream")
+      type = "text/plain"
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    startActivity(shareIntent)
+  }
 
   private fun showCommentDialog() {
-    CommentPopUpBottomSheetDialog.newInstance(object : CommentPopUpBottomSheetDialog.SetOnCommentSend {
+    CommentPopUpBottomSheetDialog.newInstance(object :
+      CommentPopUpBottomSheetDialog.SetOnCommentSend {
       override fun onCommentSend(text: String) {
         chatAdapter.addChat(text)
       }
@@ -290,7 +297,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           .setMaxPlaybackSpeed(1.02f)
           .setMaxOffsetMs(1000).build()
       ) //TODO set offsetnya biar ga terlalu delay
-      .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA).setMimeType(MimeTypes.APPLICATION_M3U8)
+      .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA)
+      .setMimeType(MimeTypes.APPLICATION_M3U8)
       .build()
   }
 
@@ -302,7 +310,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           getDataProduct()
           viewCountHandler.postDelayed(this, 5000)
         }
-      }, 5000)
+      }, 5000
+    )
   }
 
   private fun showEndStream(binding: CustomPlayerUiBinding) {
