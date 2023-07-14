@@ -7,6 +7,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -22,11 +23,13 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bumptech.glide.Glide
 import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.view.Utils.BASE_HLS_URL
+import com.madeean.livestream.view.Utils.viewDisplayMode
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
 import java.security.KeyManagementException
@@ -223,7 +226,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     val exoplayer = ExoPlayer.Builder(requireContext()).build()
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
-      val mediaItem = buildMediaItem(BASE_HLS_URL/*"$BASE_HLS_URL$streamKey.m3u8"*/)
+      val mediaItem = buildMediaItem()
       setMediaSource(createDataSource(mediaItem))
 
       trackSelectionParameters = trackSelectionParameters.buildUpon()
@@ -256,8 +259,13 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
     super.onPictureInPictureModeChanged(isInPictureInPictureMode)
     binding.apply {
-      productContainer.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
-      layoutLiveView.tvViews.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
+      productContainer.visibility = viewDisplayMode(isInPictureInPictureMode)
+      layoutLiveView.viewCountContainer.visibility = viewDisplayMode(isInPictureInPictureMode)
+      clIconProduct.visibility = viewDisplayMode(isInPictureInPictureMode)
+      clLove.visibility = viewDisplayMode(isInPictureInPictureMode)
+      clShare.visibility = viewDisplayMode(isInPictureInPictureMode)
+      ivClose.visibility = viewDisplayMode(isInPictureInPictureMode)
+      viewHost.containerHost.visibility = viewDisplayMode(isInPictureInPictureMode)
     }
   }
 
@@ -275,8 +283,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     return hlsMediaSource
   }
 
-  private fun buildMediaItem(url: String): MediaItem {
-    return MediaItem.Builder().setUri(url)
+  private fun buildMediaItem(): MediaItem {
+    return MediaItem.Builder().setUri(BASE_HLS_URL)
       .setLiveConfiguration(
         MediaItem.LiveConfiguration.Builder()
           .setMaxPlaybackSpeed(1.02f)
@@ -322,11 +330,9 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onPause() {
     super.onPause()
     viewModel.postViewCount(streamKey, false)
-    binding.pvVideoView.player?.apply{
-      stop()
-    }
+    binding.pvVideoView.player?.stop()
   }
-  private fun Long.toSecond(): Long = this / 1000000
+  private fun Long.toSecond(): Long = this / 1000
 
   private fun activity(): LivestreamActivity {
     return requireActivity() as LivestreamActivity
