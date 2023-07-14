@@ -9,6 +9,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
+import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ReportFragment.Companion.reportFragment
@@ -45,6 +46,10 @@ class LivestreamActivity : AppCompatActivity() {
       ViewModelProvider.NewInstanceFactory()
     )[LivestreamViewModel::class.java]
 
+    onBackPressedDispatcher.addCallback {
+      enterPictureInPictureMode()
+    }
+
     setViewPager()
     setObserver()
   }
@@ -67,10 +72,6 @@ class LivestreamActivity : AppCompatActivity() {
   private fun setViewPager() {
     adapter = FragmentAdapter(supportFragmentManager, lifecycle)
     binding.vpLiveStream.adapter = adapter
-  }
-
-  override fun onBackPressed() {
-    enterPictureInPictureMode()
   }
 
 }

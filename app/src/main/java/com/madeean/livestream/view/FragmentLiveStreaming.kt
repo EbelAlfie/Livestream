@@ -28,6 +28,7 @@ import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.view.Utils.BASE_HLS_URL
+import com.madeean.livestream.view.Utils.viewDisplayMode
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
 import java.security.KeyManagementException
@@ -268,7 +269,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     val exoplayer = ExoPlayer.Builder(requireContext()).build()
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
-      val mediaItem = buildMediaItem(BASE_HLS_URL/*"$BASE_HLS_URL$streamKey.m3u8"*/)
+      val mediaItem = buildMediaItem()
       setMediaSource(createDataSource(mediaItem))
 
       trackSelectionParameters = trackSelectionParameters.buildUpon()
@@ -280,18 +281,13 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           when (playbackState) {
             Player.STATE_READY -> {}
             Player.STATE_BUFFERING -> {}
-            Player.STATE_ENDED -> {
-              showEndStream(binding)
-            }
-            Player.STATE_IDLE -> {
-              prepare()
-            }
+            Player.STATE_ENDED -> { showEndStream(binding) }
+            Player.STATE_IDLE -> { prepare() }
           }
         }
-
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
-          when (error.errorCode) {
+          when(error.errorCode) {
             PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW ->
               seekToDefaultPosition()
             else -> toastPrint(error.errorCodeName)
@@ -306,8 +302,13 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
     super.onPictureInPictureModeChanged(isInPictureInPictureMode)
     binding.apply {
-      productContainer.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
-      layoutLiveView.tvViews.visibility = if (isInPictureInPictureMode) View.GONE else View.VISIBLE
+      productContainer.visibility = viewDisplayMode(isInPictureInPictureMode)
+      layoutLiveView.viewCountContainer.visibility = viewDisplayMode(isInPictureInPictureMode)
+      viewIconShareLike.clLove.visibility = viewDisplayMode(isInPictureInPictureMode)
+      viewIconShareLike.clIconProduct.visibility = viewDisplayMode(isInPictureInPictureMode)
+      viewIconShareLike.clShare.visibility = viewDisplayMode(isInPictureInPictureMode)
+      ivClose.visibility = viewDisplayMode(isInPictureInPictureMode)
+      viewHost.containerHost.visibility = viewDisplayMode(isInPictureInPictureMode)
     }
   }
 
@@ -325,8 +326,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     return hlsMediaSource
   }
 
-  private fun buildMediaItem(url: String): MediaItem {
-    return MediaItem.Builder().setUri(url)
+  private fun buildMediaItem(): MediaItem {
+    return MediaItem.Builder().setUri(BASE_HLS_URL)
       .setLiveConfiguration(
         MediaItem.LiveConfiguration.Builder()
           .setMaxPlaybackSpeed(1.02f)
@@ -365,7 +366,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onResume() {
     super.onResume()
     viewModel.postViewCount(streamKey, true)
-    binding.pvVideoView.player?.apply {
+    binding.pvVideoView.player?.apply{
       seekToDefaultPosition()
       prepare()
     }
@@ -374,12 +375,9 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onPause() {
     super.onPause()
     viewModel.postViewCount(streamKey, false)
-    binding.pvVideoView.player?.apply {
-      stop()
-    }
+    binding.pvVideoView.player?.stop()
   }
-
-  private fun Long.toSecond(): Long = this / 1000000
+  private fun Long.toSecond(): Long = this / 1000
 
   private fun activity(): LivestreamActivity {
     return requireActivity() as LivestreamActivity
