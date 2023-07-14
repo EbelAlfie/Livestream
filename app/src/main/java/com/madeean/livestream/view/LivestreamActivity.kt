@@ -1,18 +1,12 @@
 package com.madeean.livestream.view
 
-import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.inputmethod.InputMethodManager
+import android.util.Rational
 import android.widget.Toast
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.addCallback
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.lifecycle.ViewModelProvider
 import com.madeean.livestream.databinding.ActivityMainBinding
 import com.madeean.livestream.viewmodel.LivestreamViewModel
@@ -47,11 +41,16 @@ class LivestreamActivity : AppCompatActivity() {
     )[LivestreamViewModel::class.java]
 
     onBackPressedDispatcher.addCallback {
-      enterPictureInPictureMode()
+      if (checkPipPermission()) enterPictureInPictureMode()
+      this.handleOnBackPressed()
     }
 
     setViewPager()
     setObserver()
+  }
+
+  private fun checkPipPermission(): Boolean {
+    return false
   }
 
   private fun setObserver() {

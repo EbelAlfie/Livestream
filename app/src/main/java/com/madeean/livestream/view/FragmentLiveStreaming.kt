@@ -229,7 +229,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     }
   }
 
-
   @SuppressLint("UnsafeOptInUsageError")
   private fun initPlayer() {
     val exoplayer = ExoPlayer.Builder(requireContext()).build()
