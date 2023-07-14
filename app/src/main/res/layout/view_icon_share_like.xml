@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_icon_product"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="12dp"
+    android:clipToPadding="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+  <TextView
+      android:id="@+id/tv_like_count"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      android:layout_marginBottom="40dp"
+      android:background="@drawable/bg_like_count"
+      android:maxWidth="50dp"
+      android:maxHeight="30dp"
+      android:maxLines="1"
+      android:paddingHorizontal="10dp"
+      android:paddingVertical="5dp"
+      android:text="10,4rbbbbb"
+      android:textSize="10sp"
+      android:translationZ="10dp"
+      app:layout_constraintBottom_toBottomOf="@id/cl_love"
+      app:layout_constraintEnd_toEndOf="parent"
+      />
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/cl_love"
+      android:layout_width="45dp"
+      android:layout_height="45dp"
+      android:background="@drawable/bg_icon_livestream"
+      android:minHeight="64dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="@id/tv_like_count"
+      app:layout_constraintStart_toStartOf="@id/tv_like_count"
+      >
+
+    <Button
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/baseline_favorite_border_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/cl_share"
+      android:layout_width="45dp"
+      android:layout_height="45dp"
+      android:layout_marginHorizontal="10dp"
+      android:background="@drawable/bg_icon_livestream"
+      android:minHeight="64dp"
+      android:translationZ="99dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toStartOf="@id/cl_love"
+      app:layout_constraintTop_toTopOf="@id/cl_love"
+      >
+
+    <ImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/icon_share"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

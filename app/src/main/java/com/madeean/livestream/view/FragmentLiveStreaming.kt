@@ -1,6 +1,7 @@
 package com.madeean.livestream.view
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -126,17 +127,27 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
       tvComment.setOnClickListener {
         showCommentDialog()
       }
-      clShare.setOnClickListener {
+      viewIconShareLike.clShare.setOnClickListener {
         showPopupShare()
       }
       setOnClickBasket()
     }
   }
 
-  private fun showPopupShare() {}
+  private fun showPopupShare() {
+    val sendIntent: Intent = Intent().apply {
+      action = Intent.ACTION_SEND
+      putExtra(Intent.EXTRA_TEXT, "Alfagift Livestream")
+      type = "text/plain"
+    }
+
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    startActivity(shareIntent)
+  }
 
   private fun showCommentDialog() {
-    CommentPopUpBottomSheetDialog.newInstance(object : CommentPopUpBottomSheetDialog.SetOnCommentSend {
+    CommentPopUpBottomSheetDialog.newInstance(object :
+      CommentPopUpBottomSheetDialog.SetOnCommentSend {
       override fun onCommentSend(text: String) {
         chatAdapter.addChat(text)
       }
@@ -235,13 +246,18 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           when (playbackState) {
             Player.STATE_READY -> {}
             Player.STATE_BUFFERING -> {}
-            Player.STATE_ENDED -> { showEndStream(binding) }
-            Player.STATE_IDLE -> { prepare() }
+            Player.STATE_ENDED -> {
+              showEndStream(binding)
+            }
+            Player.STATE_IDLE -> {
+              prepare()
+            }
           }
         }
+
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
-          when(error.errorCode) {
+          when (error.errorCode) {
             PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW ->
               seekToDefaultPosition()
             else -> toastPrint(error.errorCodeName)
@@ -282,7 +298,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           .setMaxPlaybackSpeed(1.02f)
           .setMaxOffsetMs(1000).build()
       ) //TODO set offsetnya biar ga terlalu delay
-      .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA).setMimeType(MimeTypes.APPLICATION_M3U8)
+      .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA)
+      .setMimeType(MimeTypes.APPLICATION_M3U8)
       .build()
   }
 
@@ -294,7 +311,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           getDataProduct()
           viewCountHandler.postDelayed(this, 5000)
         }
-      }, 5000)
+      }, 5000
+    )
   }
 
   private fun showEndStream(binding: CustomPlayerUiBinding) {
@@ -313,7 +331,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onResume() {
     super.onResume()
     viewModel.postViewCount(streamKey, true)
-    binding.pvVideoView.player?.apply{
+    binding.pvVideoView.player?.apply {
       seekToDefaultPosition()
       prepare()
     }
@@ -322,10 +340,11 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onPause() {
     super.onPause()
     viewModel.postViewCount(streamKey, false)
-    binding.pvVideoView.player?.apply{
+    binding.pvVideoView.player?.apply {
       stop()
     }
   }
+
   private fun Long.toSecond(): Long = this / 1000000
 
   private fun activity(): LivestreamActivity {
