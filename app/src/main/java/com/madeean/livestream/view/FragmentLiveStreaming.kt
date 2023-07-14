@@ -29,6 +29,7 @@ import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.view.Utils.BASE_HLS_URL
+import com.madeean.livestream.view.Utils.BASE_TEST_URL
 import com.madeean.livestream.view.Utils.viewDisplayMode
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
@@ -333,7 +334,10 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
   }
 
   private fun buildMediaItem(): MediaItem {
-    return MediaItem.Builder().setUri(BASE_HLS_URL)
+    return MediaItem.Builder().setUri(
+      if (streamKey.isBlank()) BASE_TEST_URL
+      else "$BASE_HLS_URL$streamKey.m3u8"
+    )
       .setLiveConfiguration(
         MediaItem.LiveConfiguration.Builder()
           .setMaxPlaybackSpeed(1.02f)
@@ -377,10 +381,14 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
     }
   }
 
+  override fun onStop() {
+    super.onStop()
+    binding.pvVideoView.player?.stop()
+  }
+
   override fun onPause() {
     super.onPause()
     viewModel.postViewCount(streamKey, false)
-    binding.pvVideoView.player?.stop()
   }
 
   private fun Long.toSecond(): Long = this / 1000

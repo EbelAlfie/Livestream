@@ -45,6 +45,13 @@ class LivestreamActivity : AppCompatActivity() {
 
     setViewPager()
     setObserver()
+
+    testFragment()
+  }
+
+  private fun testFragment() {
+    val videoFragment = FragmentLiveStreaming("")
+    adapter.addFragment(videoFragment)
   }
 
   private fun setObserver() {
