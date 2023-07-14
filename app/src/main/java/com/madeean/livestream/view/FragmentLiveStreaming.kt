@@ -8,6 +8,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -131,20 +132,24 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
   private fun getLikeCount() {
     binding.viewIconShareLike.btnLove.setOnClickListener {
-      Handler(Looper.getMainLooper()).postDelayed(
-         {
-          run {
-            viewModel.addLike(streamKey)
-          }
-        }, 3000
-      )
-
+      viewModel.addLike(streamKey)
       Handler(Looper.getMainLooper()).postDelayed(
         {
           run {
             binding.viewIconShareLike.btnLove.isChecked = false
           }
         }, 200
+      )
+
+      val animationSlideUp = AnimationUtils.loadAnimation(context, R.anim.slide_up_like)
+      binding.ivLoveClicked.visibility = View.VISIBLE
+      binding.ivLoveClicked.startAnimation(animationSlideUp)
+      Handler(Looper.getMainLooper()).postDelayed(
+        {
+          run {
+            binding.ivLoveClicked.visibility = View.GONE
+          }
+        }, 100
       )
 
 
@@ -277,13 +282,18 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           when (playbackState) {
             Player.STATE_READY -> {}
             Player.STATE_BUFFERING -> {}
-            Player.STATE_ENDED -> { showEndStream(binding) }
-            Player.STATE_IDLE -> { prepare() }
+            Player.STATE_ENDED -> {
+              showEndStream(binding)
+            }
+            Player.STATE_IDLE -> {
+              prepare()
+            }
           }
         }
+
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
-          when(error.errorCode) {
+          when (error.errorCode) {
             PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW ->
               seekToDefaultPosition()
             else -> toastPrint(error.errorCodeName)
@@ -362,7 +372,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onResume() {
     super.onResume()
     viewModel.postViewCount(streamKey, true)
-    binding.pvVideoView.player?.apply{
+    binding.pvVideoView.player?.apply {
       seekToDefaultPosition()
       prepare()
     }
@@ -373,6 +383,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     viewModel.postViewCount(streamKey, false)
     binding.pvVideoView.player?.stop()
   }
+
   private fun Long.toSecond(): Long = this / 1000
 
   private fun activity(): LivestreamActivity {
