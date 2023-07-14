@@ -68,6 +68,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     )[ProductsViewModel::class.java]
 
     disableSSLCertificateVerify() //buat streaming aniplay :)
+
     getDataLike()
     initViewInteractions()
     initPlayer()
@@ -101,12 +102,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     try {
       val sc: SSLContext = SSLContext.getInstance("SSL")
       sc.init(null, trustAllCerts, SecureRandom())
-      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory())
-      HttpsURLConnection.setDefaultHostnameVerifier(object : HostnameVerifier {
-        override fun verify(hostname: String?, session: SSLSession?): Boolean {
-          return true
-        }
-      })
+      HttpsURLConnection.setDefaultSSLSocketFactory(sc.socketFactory)
+      HttpsURLConnection.setDefaultHostnameVerifier { _, _ -> true }
     } catch (e: KeyManagementException) {
       e.printStackTrace()
     } catch (e: NoSuchAlgorithmException) {

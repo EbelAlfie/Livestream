@@ -51,6 +51,26 @@ class LivestreamActivity : AppCompatActivity() {
     setObserver()
   }
 
+  private fun setObserver() {
+    viewModel.getLivestreamData().observe(this) {
+      if (it.isEmpty()) Toast.makeText(this, "No streams at the moment", Toast.LENGTH_SHORT).show()
+      for(i in it){
+        val videoFragment = FragmentLiveStreaming(port, i.streamKey)
+        Bundle().apply {
+          putInt("port", port)
+          putString("key", i.streamKey)
+          videoFragment.arguments = this
+        }
+        adapter.addFragment(videoFragment)
+      }
+    }
+  }
+
+  private fun setViewPager() {
+    adapter = FragmentAdapter(supportFragmentManager, lifecycle)
+    binding.vpLiveStream.adapter = adapter
+  }
+
   private fun checkPipPermission(): Boolean {
     val appOps = getSystemService(Context.APP_OPS_SERVICE) as? AppOpsManager?
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -72,26 +92,6 @@ class LivestreamActivity : AppCompatActivity() {
     } else {
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
     }
-  }
-
-  private fun setObserver() {
-    viewModel.getLivestreamData().observe(this) {
-      if (it.isEmpty()) Toast.makeText(this, "No streams at the moment", Toast.LENGTH_SHORT).show()
-      for(i in it){
-        val videoFragment = FragmentLiveStreaming(port, i.streamKey)
-        Bundle().apply {
-          putInt("port", port)
-          putString("key", i.streamKey)
-          videoFragment.arguments = this
-        }
-        adapter.addFragment(videoFragment)
-      }
-    }
-  }
-
-  private fun setViewPager() {
-    adapter = FragmentAdapter(supportFragmentManager, lifecycle)
-    binding.vpLiveStream.adapter = adapter
   }
 
 }
