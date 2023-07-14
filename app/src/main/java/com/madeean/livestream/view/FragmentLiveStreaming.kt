@@ -297,7 +297,6 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
           when (error.errorCode) {
             PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW ->
               seekToDefaultPosition()
-            else -> toastPrint(error.errorCodeName)
           }
           prepare()
         }
@@ -389,6 +388,7 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
   override fun onPause() {
     super.onPause()
     viewModel.postViewCount(streamKey, false)
+    binding.pvVideoView.player?.stop()
   }
 
   private fun Long.toSecond(): Long = this / 1000
