@@ -112,9 +112,18 @@
 
     <include
       android:id="@+id/view_icon_share_like"
-        layout="@layout/view_icon_share_like"
-        />
+        layout="@layout/view_icon_share_like"/>
 
+
+    <ImageView
+        android:id="@+id/iv_love_clicked"
+        android:visibility="gone"
+        android:layout_margin="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_favorite"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
 
 
 
