@@ -67,12 +67,16 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     )[ProductsViewModel::class.java]
 
     disableSSLCertificateVerify() //buat streaming aniplay :)
-
+    getDataLike()
     initViewInteractions()
     initPlayer()
     initRvCommentList()
     setObservers()
     getData()
+  }
+
+  private fun getDataLike() {
+    viewModel.addLike(streamKey)
   }
 
   private fun initRvCommentList() {
@@ -112,11 +116,41 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   private fun setObservers() {
     setObserverViewCount()
     setObserveProduct()
+    setObserveLikeCount()
+  }
+
+  private fun setObserveLikeCount() {
+    viewModel.like.observe(viewLifecycleOwner) {
+      binding.viewIconShareLike.tvLikeCount.text = it.like.toString()
+    }
   }
 
   private fun getData() {
     getViewCount()
     getDataProduct()
+    getLikeCount()
+  }
+
+  private fun getLikeCount() {
+    binding.viewIconShareLike.btnLove.setOnClickListener {
+      Handler(Looper.getMainLooper()).postDelayed(
+         {
+          run {
+            viewModel.addLike(streamKey)
+          }
+        }, 3000
+      )
+
+      Handler(Looper.getMainLooper()).postDelayed(
+        {
+          run {
+            binding.viewIconShareLike.btnLove.isChecked = false
+          }
+        }, 200
+      )
+
+
+    }
   }
 
   private fun initViewInteractions() {

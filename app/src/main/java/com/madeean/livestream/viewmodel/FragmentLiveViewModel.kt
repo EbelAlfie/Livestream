@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.madeean.livestream.data.repository.LivestreamRepositoryImpl
 import com.madeean.livestream.domain.LivestreamUsecaseImpl
+import com.madeean.livestream.domain.entity.LikeDomainModel
 import com.madeean.livestream.domain.entity.LivestreamStatistic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +29,15 @@ class FragmentLiveViewModel : ViewModel(){
             usecaseImpl.postViewCount(
                 LivestreamStatistic(streamKey= streamKey, isViewing = isViewing)
             )
+        }
+    }
+
+    private var _like = MutableLiveData<LikeDomainModel>()
+    val like: LiveData<LikeDomainModel> = _like
+
+    fun addLike(streamKey: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            _like.postValue(usecaseImpl.addLike(streamKey))
         }
     }
 
