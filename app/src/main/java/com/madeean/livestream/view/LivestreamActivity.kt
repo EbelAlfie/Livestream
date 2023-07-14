@@ -51,7 +51,7 @@ class LivestreamActivity : AppCompatActivity() {
     viewModel.getLivestreamData().observe(this) {
       if (it.isEmpty()) Toast.makeText(this, "No streams at the moment", Toast.LENGTH_SHORT).show()
       for(i in it){
-        val videoFragment = FragmentLiveStreaming(port, i.streamKey)
+        val videoFragment = FragmentLiveStreaming(i.streamKey)
         Bundle().apply {
           putInt("port", port)
           putString("key", i.streamKey)

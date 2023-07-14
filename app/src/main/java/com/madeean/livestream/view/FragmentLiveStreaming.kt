@@ -38,7 +38,7 @@ import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.*
 
-class FragmentLiveStreaming(private val port: Int, private val streamKey: String) : Fragment() {
+class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
   private lateinit var binding: CustomPlayerUiBinding
   private val viewCountHandler = Handler(Looper.getMainLooper())
   private lateinit var viewModel: FragmentLiveViewModel
@@ -339,7 +339,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           .setMaxPlaybackSpeed(1.02f)
           .setMaxOffsetMs(1000).build()
       ) //TODO set offsetnya biar ga terlalu delay
-      .setMimeType(MimeTypes.APPLICATION_MPD).setMimeType(MimeTypes.APPLICATION_MATROSKA)
       .setMimeType(MimeTypes.APPLICATION_M3U8)
       .build()
   }
