@@ -42,10 +42,7 @@ class LivestreamActivity : AppCompatActivity() {
       ViewModelProvider.NewInstanceFactory()
     )[LivestreamViewModel::class.java]
 
-    onBackPressedDispatcher.addCallback {
-      if (checkPipPermission()) enterPictureInPictureMode()
-      else finish()
-    }
+    setOnBackPressedDispatcher()
 
     setViewPager()
     setObserver()
@@ -69,6 +66,13 @@ class LivestreamActivity : AppCompatActivity() {
   private fun setViewPager() {
     adapter = FragmentAdapter(supportFragmentManager, lifecycle)
     binding.vpLiveStream.adapter = adapter
+  }
+
+  private fun setOnBackPressedDispatcher() {
+    onBackPressedDispatcher.addCallback {
+      if (checkPipPermission()) enterPictureInPictureMode()
+      else finish()
+    }
   }
 
   private fun checkPipPermission(): Boolean {
