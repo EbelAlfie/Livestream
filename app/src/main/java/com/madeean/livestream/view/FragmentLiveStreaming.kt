@@ -21,11 +21,12 @@ import androidx.media3.exoplayer.dash.DashMediaSource
 import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.exoplayer.upstream.BandwidthMeter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
+import com.madeean.livestream.view.Utils.BASE_HLS_URL
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
 import java.security.KeyManagementException
@@ -38,15 +39,8 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   private lateinit var binding: CustomPlayerUiBinding
   private val viewCountHandler = Handler(Looper.getMainLooper())
   private lateinit var viewModel: FragmentLiveViewModel
+  private lateinit var chatAdapter: ChatAdapter
   private lateinit var productViewModel: ProductsViewModel
-  private val BASE_RTMP_URL =
-    "rtmp://0.tcp.ap.ngrok.io:$port/live/" //"https://livesim.dashif.org/livesim/chunkdur_1/ato_7/testpic4_8s/Manifest.mpd"//"rtmp://0.tcp.ap.ngrok.io:$port/live/"
-  private val BASE_HLS_URL =
-    "https://1dcd6b126c49-12390209840656915252.ngrok-free.app/hls/"
-  private val TV_GAJE_URL =
-    "https://op-group1-swiftservehd-1.dens.tv/h/h114/S4/mnf.m3u8?app_type=web&userid=jjj&chname=ANIPLUS_HD"
-    //"https://stmv1.srvif.com/animetv/animetv/playlist.m3u8"
-    //"https://nhkwlive-ojp.akamaized.net/hls/live/2003459/nhkwlive-ojp-en/index.m3u8"
   private var listData: ArrayList<ModelProductListDomain> = arrayListOf()
   private lateinit var productHighlight: ModelProductListDomain
 
@@ -73,16 +67,23 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
 
     disableSSLCertificateVerify() //buat streaming aniplay :)
 
-    setObserver()
+    initViewInteractions()
     initPlayer()
-    getViewCount()
-    setObserveProduct()
-    getDataProduct()
-    setOnClickBasket()
+    initRvCommentList()
+    setObservers()
+    getData()
+  }
+
+  private fun initRvCommentList() {
+    binding.apply {
+      rvChats.layoutManager = LinearLayoutManager(requireContext())
+      chatAdapter = ChatAdapter()
+      rvChats.adapter = chatAdapter
+    }
   }
 
   private fun disableSSLCertificateVerify() {
-    val trustAllCerts: Array<TrustManager> = arrayOf<TrustManager>(
+    val trustAllCerts: Array<TrustManager> = arrayOf(
       object : X509TrustManager {
         override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
         override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {}
@@ -105,6 +106,44 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     } catch (e: NoSuchAlgorithmException) {
       e.printStackTrace()
     }
+  }
+
+  private fun setObservers() {
+    setObserverViewCount()
+    setObserveProduct()
+  }
+
+  private fun getData() {
+    getViewCount()
+    getDataProduct()
+  }
+
+  private fun initViewInteractions() {
+    binding.apply {
+      ivClose.setOnClickListener {
+        activity().onBackPressedDispatcher.onBackPressed()
+      }
+      tvComment.setOnClickListener {
+        showCommentDialog()
+      }
+      clShare.setOnClickListener {
+        showPopupShare()
+      }
+      setOnClickBasket()
+    }
+  }
+
+  private fun showPopupShare() {}
+
+  private fun showCommentDialog() {
+    CommentPopUpBottomSheetDialog.newInstance(object : CommentPopUpBottomSheetDialog.SetOnCommentSend {
+      override fun onCommentSend(text: String) {
+        chatAdapter.addChat(text)
+      }
+    }).show(
+      requireActivity().supportFragmentManager,
+      CommentPopUpBottomSheetDialog::class.java.simpleName
+    )
   }
 
   private fun getDataProduct() {
@@ -133,14 +172,22 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
             isActive = product.isActive
           )
           setHighlightProductView(product)
-          binding.viewProductPopup.highlightProduct.visibility = View.VISIBLE
+          showProductPopup()
         }
       }
 
       if (position <= 0) {
-        binding.viewProductPopup.highlightProduct.visibility = View.GONE
+        hideProductPopup()
       }
     }
+  }
+
+  private fun showProductPopup() {
+    binding.viewProductPopup.highlightProduct.visibility = View.VISIBLE
+  }
+
+  private fun hideProductPopup() {
+    binding.viewProductPopup.highlightProduct.visibility = View.GONE
   }
 
   private fun setOnClickBasket() {
@@ -153,7 +200,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     }
   }
 
-  private fun setObserver() {
+  private fun setObserverViewCount() {
     viewModel.getLivestreamViewCount().observe(viewLifecycleOwner) {
       binding.layoutLiveView.tvViews.text = it.toString()
     }
@@ -176,7 +223,7 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     val exoplayer = ExoPlayer.Builder(requireContext()).build()
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
-      val mediaItem = buildMediaItem(TV_GAJE_URL/*"$BASE_HLS_URL$streamKey.m3u8"*/)
+      val mediaItem = buildMediaItem(BASE_HLS_URL/*"$BASE_HLS_URL$streamKey.m3u8"*/)
       setMediaSource(createDataSource(mediaItem))
 
       trackSelectionParameters = trackSelectionParameters.buildUpon()
@@ -184,27 +231,14 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
         .build()
 
       addListener(object : Player.Listener {
-        override fun onIsLoadingChanged(isLoading: Boolean) {
-          super.onIsLoadingChanged(isLoading)
-        }
-
-        override fun onEvents(player: Player, events: Player.Events) {
-          super.onEvents(player, events)
-        }
-
         override fun onPlaybackStateChanged(playbackState: Int) {
           when (playbackState) {
-            Player.STATE_READY -> {}//toastPrint("ready")
-            Player.STATE_BUFFERING -> {}//toastPrint("buffer")
-            Player.STATE_ENDED -> { //toastPrint("end")
-              showEndStream(binding)
-            }
-            Player.STATE_IDLE -> { //toastPrint("idle")
-              prepare()
-            }
+            Player.STATE_READY -> {}
+            Player.STATE_BUFFERING -> {}
+            Player.STATE_ENDED -> { showEndStream(binding) }
+            Player.STATE_IDLE -> { prepare() }
           }
         }
-
         override fun onPlayerError(error: PlaybackException) {
           super.onPlayerError(error)
           when(error.errorCode) {
@@ -215,9 +249,6 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
           prepare()
         }
       })
-
-      seekToDefaultPosition()
-      prepare()
       playWhenReady = true
     }
   }
@@ -282,11 +313,22 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
   override fun onResume() {
     super.onResume()
     viewModel.postViewCount(streamKey, true)
+    binding.pvVideoView.player?.apply{
+      seekToDefaultPosition()
+      prepare()
+    }
   }
 
   override fun onPause() {
     super.onPause()
     viewModel.postViewCount(streamKey, false)
+    binding.pvVideoView.player?.apply{
+      stop()
+    }
   }
   private fun Long.toSecond(): Long = this / 1000000
+
+  private fun activity(): LivestreamActivity {
+    return requireActivity() as LivestreamActivity
+  }
 }
