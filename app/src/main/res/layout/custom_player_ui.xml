@@ -9,35 +9,33 @@
     <include
         android:id="@+id/view_host"
         layout="@layout/view_host_name"
+        android:layout_margin="@dimen/showcase_margin_12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        />
+        android:layout_alignParentTop="true"/>
 
     <include
         android:id="@+id/layout_live_view"
         layout="@layout/view_view_count"
+        android:layout_margin="@dimen/showcase_margin_12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toStartOf="@id/iv_close"
-        />
+        android:layout_toStartOf="@id/iv_close" />
 
     <ImageView
         android:id="@+id/iv_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/showcase_margin_12dp"
         android:src="@drawable/baseline_close_24"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        android:elevation="1dp"/>
 
     <androidx.media3.ui.PlayerView
         android:id="@+id/pv_video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="2dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="-2dp"

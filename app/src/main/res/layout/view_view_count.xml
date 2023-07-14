@@ -3,12 +3,11 @@
     android:id="@+id/view_count_container"
     android:background="@drawable/view_count_border"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:paddingVertical="@dimen/showcase_padding_8dp"
-    android:paddingHorizontal="@dimen/showcase_padding_16dp"
-    android:orientation="horizontal">
+    android:elevation="1dp"
+    android:paddingHorizontal="@dimen/showcase_padding_16dp">
 
     <TextView
         android:id="@+id/tv_views"

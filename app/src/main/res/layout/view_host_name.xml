@@ -4,7 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/showcase_padding_8dp"
-    android:background="@drawable/view_count_border">
+    android:background="@drawable/view_count_border"
+    android:elevation="1dp">
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/siv_profile_pict"
         android:layout_width="@dimen/image_40"
