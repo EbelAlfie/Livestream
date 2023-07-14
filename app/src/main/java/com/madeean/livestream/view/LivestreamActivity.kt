@@ -1,7 +1,9 @@
 package com.madeean.livestream.view
 
+import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Rational
 import android.widget.Toast
@@ -42,7 +44,7 @@ class LivestreamActivity : AppCompatActivity() {
 
     onBackPressedDispatcher.addCallback {
       if (checkPipPermission()) enterPictureInPictureMode()
-      this.handleOnBackPressed()
+      else finish()
     }
 
     setViewPager()
@@ -50,7 +52,26 @@ class LivestreamActivity : AppCompatActivity() {
   }
 
   private fun checkPipPermission(): Boolean {
-    return false
+    val appOps = getSystemService(Context.APP_OPS_SERVICE) as? AppOpsManager?
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        appOps?.unsafeCheckOpNoThrow(
+          AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+          android.os.Process.myUid(),
+          packageName
+        )
+      } else {
+        @Suppress("DEPRECATION")
+        appOps?.checkOpNoThrow(
+          AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+          android.os.Process.myUid(),
+          packageName
+        )
+      }
+      mode == AppOpsManager.MODE_ALLOWED
+    } else {
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+    }
   }
 
   private fun setObserver() {
