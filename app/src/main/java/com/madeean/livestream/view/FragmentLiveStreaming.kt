@@ -1,6 +1,7 @@
 package com.madeean.livestream.view
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -27,6 +28,7 @@ import com.madeean.livestream.R
 import com.madeean.livestream.databinding.CustomPlayerUiBinding
 import com.madeean.livestream.domain.products.model.ModelProductListDomain
 import com.madeean.livestream.view.Utils.BASE_HLS_URL
+import com.madeean.livestream.view.Utils.viewDisplayMode
 import com.madeean.livestream.viewmodel.FragmentLiveViewModel
 import com.madeean.livestream.viewmodel.ProductsViewModel
 import java.security.KeyManagementException
@@ -268,9 +270,9 @@ class FragmentLiveStreaming(private val port: Int, private val streamKey: String
     binding.apply {
       productContainer.visibility = viewDisplayMode(isInPictureInPictureMode)
       layoutLiveView.viewCountContainer.visibility = viewDisplayMode(isInPictureInPictureMode)
-      clIconProduct.visibility = viewDisplayMode(isInPictureInPictureMode)
-      clLove.visibility = viewDisplayMode(isInPictureInPictureMode)
-      clShare.visibility = viewDisplayMode(isInPictureInPictureMode)
+      viewIconShareLike.clLove.visibility = viewDisplayMode(isInPictureInPictureMode)
+      viewIconShareLike.clIconProduct.visibility = viewDisplayMode(isInPictureInPictureMode)
+      viewIconShareLike.clShare.visibility = viewDisplayMode(isInPictureInPictureMode)
       ivClose.visibility = viewDisplayMode(isInPictureInPictureMode)
       viewHost.containerHost.visibility = viewDisplayMode(isInPictureInPictureMode)
     }
