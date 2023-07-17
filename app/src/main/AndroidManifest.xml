@@ -17,13 +17,8 @@
         android:name=".view.LivestreamActivity"
         android:supportsPictureInPicture="true"
         android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
-        android:launchMode="singleInstancePerTask"
+        android:launchMode="singleInstance"
         android:windowSoftInputMode="adjustPan"
-        android:exported="false">
-    </activity>
-
-    <activity
-        android:name=".view.ServerSelectionActivity"
         android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />

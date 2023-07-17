@@ -1,12 +1,15 @@
 package com.madeean.livestream.view
 
 import android.app.AppOpsManager
+import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Rational
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.madeean.livestream.databinding.ActivityMainBinding
@@ -16,10 +19,10 @@ import com.madeean.livestream.viewmodel.LivestreamViewModel
 class LivestreamActivity : AppCompatActivity() {
   private lateinit var binding:ActivityMainBinding
   private lateinit var adapter: FragmentAdapter
-  private var port: Int = 0
+  //private var port: Int = 0
   private lateinit var viewModel: LivestreamViewModel
 
-  companion object {
+  /*companion object {
     fun newInstanceActivity(context: Context, port: Int?) {
       val intent = Intent(context, LivestreamActivity::class.java)
       if (port != null) {
@@ -27,14 +30,14 @@ class LivestreamActivity : AppCompatActivity() {
       }
       context.startActivity(intent)
     }
-  }
+  }*/
 
   override fun onCreate(savedInstanceState: Bundle?) {
     binding = ActivityMainBinding.inflate(layoutInflater)
     super.onCreate(savedInstanceState)
     setContentView(binding.root)
 
-    port = intent.getIntExtra("port", 0)
+    //port = intent.getIntExtra("port", 0)
 
     viewModel = ViewModelProvider(
       this,
@@ -60,7 +63,7 @@ class LivestreamActivity : AppCompatActivity() {
       for(i in it){
         val videoFragment = FragmentLiveStreaming(i.streamKey)
         Bundle().apply {
-          putInt("port", port)
+          //putInt("port", port)
           putString("key", i.streamKey)
           videoFragment.arguments = this
         }
@@ -76,8 +79,14 @@ class LivestreamActivity : AppCompatActivity() {
 
   private fun setOnBackPressedDispatcher() {
     onBackPressedDispatcher.addCallback {
-      if (checkPipPermission()) enterPictureInPictureMode()
-      else finish()
+      if (checkPipPermission()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          enterPictureInPictureMode(
+            PictureInPictureParams.Builder()
+              .setAspectRatio(Rational(2, 4))
+              .build())
+        }else enterPictureInPictureMode()
+      }else finish()
     }
   }
 

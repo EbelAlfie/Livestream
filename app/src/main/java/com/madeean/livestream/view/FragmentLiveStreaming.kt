@@ -12,10 +12,7 @@ import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
-import androidx.media3.common.PlaybackException
-import androidx.media3.common.Player
+import androidx.media3.common.*
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.datasource.rtmp.RtmpDataSource
 import androidx.media3.exoplayer.ExoPlayer
@@ -272,8 +269,8 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
     binding.pvVideoView.player = exoplayer
     exoplayer.apply {
       val mediaItem = buildMediaItem()
-      setMediaSource(createDataSource(mediaItem))
-
+      setMediaSources(createDataSource(mediaItem))
+      //setMediaItem(mediaItem)
       trackSelectionParameters = trackSelectionParameters.buildUpon()
         .setMaxVideoSizeSd()
         .build()
@@ -297,6 +294,7 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
           when (error.errorCode) {
             PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW ->
               seekToDefaultPosition()
+            else -> chatAdapter.addChat(error.errorCodeName)//toastPrint(error.errorCodeName)
           }
           prepare()
         }
@@ -319,7 +317,7 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
   }
 
   @SuppressLint("UnsafeOptInUsageError")
-  private fun createDataSource(mediaItem: MediaItem): MediaSource {
+  private fun createDataSource(mediaItem: MediaItem): MutableList<MediaSource> {
     val rtmpDatasourceFactory = RtmpDataSource.Factory() //transfer listener
     val defaultHttpDataSourceFactory = DefaultHttpDataSource.Factory()
 
@@ -329,7 +327,10 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
       .createMediaSource(mediaItem)
     val hlsMediaSource = HlsMediaSource.Factory(defaultHttpDataSourceFactory)
       .createMediaSource(mediaItem)
-    return hlsMediaSource
+    return mutableListOf(
+      hlsMediaSource,
+      dashMediaSource,
+      rtmpMediaSource)
   }
 
   private fun buildMediaItem(): MediaItem {
@@ -340,7 +341,7 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
       .setLiveConfiguration(
         MediaItem.LiveConfiguration.Builder()
           .setMaxPlaybackSpeed(1.02f)
-          .setMaxOffsetMs(1000).build()
+          .setMaxOffsetMs(500).build()
       ) //TODO set offsetnya biar ga terlalu delay
       .setMimeType(MimeTypes.APPLICATION_M3U8)
       .build()
@@ -371,8 +372,8 @@ class FragmentLiveStreaming(private val streamKey: String) : Fragment() {
     super.onDestroy()
   }
 
-  override fun onResume() {
-    super.onResume()
+  override fun onStart() {
+    super.onStart()
     viewModel.postViewCount(streamKey, true)
     binding.pvVideoView.player?.apply {
       seekToDefaultPosition()
