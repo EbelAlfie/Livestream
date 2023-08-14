@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    environment {
+        SDK = "C:\\Users\\davis\\AppData\\Local\\Android\\Sdk"
+    }
+
+    parameters{
+        string(
+            defaultValue: ""
+            name: "version_code"
+        )
+        string(
+            defaultValue: ""
+            name: "version_name"
+        )
+        string(
+            defaultValue: ""
+            name: "description"
+        )
+        stashedFile 'google-service.json'
+    }
+
+    stages {
+        stage('clean cache') {
+            steps {
+                bat 'fastlane gradleClean'
+            }
+        }
+
+        stage('Configure app') {
+            steps {
+                unstash 'google-service.json'
+                bat 'move googe-service.json'
+
+                bat 'gem -v'
+                bat 'java -v'
+            }
+        }
+
+        stage('build') {
+            bat 'fastlane gradleBuild'
+        }
+
+        stage('deploy') {
+            bat 'fastlane deploy VER_CODE: ${version_code} VER_NAME: ${version_name}'
+        }
+    }
+}
