@@ -37,4 +37,5 @@ platform :android do
         testers: "tester1@company.com",
         release_notes: releaseNote
     )
+    end
 end
