@@ -38,11 +38,15 @@ pipeline {
         }
 
         stage('build') {
-            bat 'fastlane gradleBuild'
+            steps {
+                bat 'fastlane gradleBuild'
+            }
         }
 
         stage('deploy') {
-            bat 'fastlane deploy VER_CODE: ${version_code} VER_NAME: ${version_name} RELEASE_NOTE: ${release_notes}'
+            steps {
+                bat 'fastlane deploy VER_CODE: ${version_code} VER_NAME: ${version_name} RELEASE_NOTE: ${release_notes}'
+            }
         }
     }
 }
