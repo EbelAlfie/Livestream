@@ -13,9 +13,9 @@ pipeline {
             defaultValue: ""
             name: "version_name"
         )
-        string(
+        text(
             defaultValue: ""
-            name: "description"
+            name: "release_notes"
         )
         stashedFile 'google-service.json'
     }
@@ -42,7 +42,7 @@ pipeline {
         }
 
         stage('deploy') {
-            bat 'fastlane deploy VER_CODE: ${version_code} VER_NAME: ${version_name}'
+            bat 'fastlane deploy VER_CODE: ${version_code} VER_NAME: ${version_name} RELEASE_NOTE: ${release_notes}'
         }
     }
 }
