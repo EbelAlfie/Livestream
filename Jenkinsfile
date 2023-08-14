@@ -31,9 +31,10 @@ pipeline {
         stage('Configure app') {
             steps {
                 unstash 'google-service.json'
-                bat 'move googe-service.json'
+                bat 'move google-service.json'
                 bat 'gem -v'
                 bat 'java -v'
+                bat 'bundle install'
             }
         }
 

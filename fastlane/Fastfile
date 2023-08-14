@@ -30,11 +30,11 @@ platform :android do
   lane :deploy do |params|
     vCode = ENV["VER_CODE"]
     vName = ENV["VER_NAME"]
-    release_notes = ENV["RELEASE_NOTE"]
+    releaseNote = ENV["RELEASE_NOTE"]
     gradle(task: "assembleDebug")
     release = firebase_app_distribution(
         app: "1:123456789:android:abcd1234",
         testers: "tester1@company.com",
-        release_notes: release_notes
+        release_notes: releaseNote
     )
 end
