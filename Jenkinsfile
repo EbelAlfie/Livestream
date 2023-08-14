@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         SDK = "C:\\Users\\davis\\AppData\\Local\\Android\\Sdk"
-        PROJ_PATH = "C:\\ProgramData\\Jenkins\\.jenkins\\workspace"
+        PROJ_PATH = "C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\livestream"
     }
 
     parameters{
@@ -33,7 +33,6 @@ pipeline {
                 unstash 'google-service.json'
                 bat 'move google-service.json'
                 bat 'gem -v'
-                bat 'java -v'
                 bat 'bundle install'
             }
         }
